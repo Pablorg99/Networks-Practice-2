@@ -1,17 +1,14 @@
 #include "Tile.h"
 #include <cstdlib>
 
-void Tile::setTile(const int leftValue, const int rightValue){
+Tile::Tile(int leftValue, int rightValue) {
     left_ = leftValue;
     right_ = rightValue;
 }
 
-void Tile::flipTile(){
+void Tile::flipTile() {
     int aux;
     aux = left_;
     left_ = right_;
-    right_ = left_;
+    right_ = aux;
 }
-
-
-
