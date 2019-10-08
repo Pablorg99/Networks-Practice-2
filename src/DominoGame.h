@@ -3,7 +3,7 @@
 
 // STL data types
 #include <list>
-#include <stack>
+#include <vector>
 // Generating random number
 #include <cstdlib>
 #include <ctime>
@@ -12,18 +12,17 @@
 #include "Player.h"
 
 using std::list;
-using std::stack;
+using std::vector;
 class DominoGame {
 
     private:
         list <Tile> board_;
-        stack <Tile> drawPile_;
-        void fillAllTiles_(vector <Tile> & allTiles);
-        Tile getRandomTile_(vector <Tile> & allTiles);
+        vector <Tile> drawPile_;
+        int tilesLeft_;
 
     public:
-        // Fill the draw pile with the 28 domino tiles randomly
-        DominoGame();
+        DominoGame(); // Fill the draw pile with the 28 domino tiles
+        Tile getRandomTile();
 };
 
 #endif //DOMINO_GAME_H
