@@ -4,7 +4,12 @@ using std::vector;
 
 DominoGame::DominoGame() {
     srand(time(NULL));
-    tilesLeft_ = 28;
+    tilesLeftInPile_ = 28;
+    fillDrawPile_();
+    dealTiles_();
+}
+
+void DominoGame::fillDrawPile_() {
     drawPile_.push_back(Tile(6,6));
     drawPile_.push_back(Tile(6,5));
     drawPile_.push_back(Tile(6,4));
@@ -36,13 +41,22 @@ DominoGame::DominoGame() {
 }
 
 Tile DominoGame::getRandomTile() {
-    if (tilesLeft_ > 0) {
-        int tileIndex = rand() % tilesLeft_;
+    if (tilesLeftInPile_ > 0) {
+        int randomTileIndex = rand() % tilesLeftInPile_;
         Tile auxiliarTile(-1,-1);
-        auxiliarTile = drawPile_[tileIndex];
-        drawPile_.erase(drawPile_.begin() + tileIndex);
-        tileIndex = tileIndex - 1;
+
+        auxiliarTile = drawPile_[randomTileIndex];
+        drawPile_.erase(drawPile_.begin() + randomTileIndex);
+        tilesLeftInPile_ = tilesLeftInPile_ - 1;
+
         return auxiliarTile;
     }
-    else return Tile(-1,-1);
+    else throw "There are no tiles in the draw pile";
+}
+
+void DominoGame::dealTiles_() {
+    for (int i = 0; i < 7; i++) {
+        firstPlayer.addTile(getRandomTile());
+        secondPlayer.addTile(getRandomTile());
+    }
 }

@@ -1,9 +1,7 @@
 #ifndef TILE_H
 #define TILE_H
 
-#include <cstdlib>
-
-class Tile{
+class Tile {
 
     private:
         int left_;
