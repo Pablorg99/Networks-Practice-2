@@ -43,9 +43,8 @@ void DominoGame::fillDrawPile_() {
 Tile DominoGame::getRandomTile() {
     if (tilesLeftInPile_ > 0) {
         int randomTileIndex = rand() % tilesLeftInPile_;
-        Tile auxiliarTile(-1,-1);
 
-        auxiliarTile = drawPile_[randomTileIndex];
+        Tile auxiliarTile = drawPile_[randomTileIndex];
         drawPile_.erase(drawPile_.begin() + randomTileIndex);
         tilesLeftInPile_ = tilesLeftInPile_ - 1;
 

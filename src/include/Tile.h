@@ -9,8 +9,8 @@ class Tile {
 
     public:
         Tile(int leftValue, int rightValue);
-        int getLeft() const {return left_;}
-        int getRight() const {return right_;}
+        inline int getLeft() const {return left_;}
+        inline int getRight() const {return right_;}
         void flipTile();
 };
 

@@ -1,7 +1,9 @@
 #include "Tile.h"
-#include <cstdlib>
 
 Tile::Tile(int leftValue, int rightValue) {
+    if ((leftValue < 0) or (leftValue > 6) or (rightValue < 0) or (rightValue > 6)) {
+        throw "Invalid tile values";
+    }
     left_ = leftValue;
     right_ = rightValue;
 }
