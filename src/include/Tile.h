@@ -1,6 +1,9 @@
 #ifndef TILE_H
 #define TILE_H
 
+#include <string>
+using std::to_string;
+
 class Tile {
 
     private:
@@ -12,6 +15,7 @@ class Tile {
         inline int getLeft() const {return left_;}
         inline int getRight() const {return right_;}
         void flipTile();
+        inline string tileToString() {return "|" + to_string(left_) + "|" + to_string(right_) + "|";}
 };
 
 #endif
