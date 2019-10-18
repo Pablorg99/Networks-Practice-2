@@ -1,6 +1,10 @@
 #ifndef TILE_H
 #define TILE_H
 
+#include <string>
+using std::to_string;
+using std::string;
+
 class Tile {
 
     private:
@@ -13,6 +17,7 @@ class Tile {
         inline int getRight() const {return right_;}
         void flipTile();
         bool operator==(Tile rightTile);
+        inline string tileToString() {return "|" + to_string(left_) + "|" + to_string(right_) + "|";}
 };
 
 #endif
