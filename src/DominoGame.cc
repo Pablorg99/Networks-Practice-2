@@ -2,7 +2,10 @@
 #include <vector>
 using std::vector;
 
-DominoGame::DominoGame() {
+DominoGame::DominoGame(Player firstPlayer, Player secondPlayer):
+    firstPlayer_(firstPlayer),
+    secondPlayer_(secondPlayer)
+{
     srand(time(NULL));
     tilesLeftInPile_ = 28;
     fillDrawPile_();
@@ -55,7 +58,7 @@ Tile DominoGame::getRandomTile() {
 
 void DominoGame::dealTiles_() {
     for (int i = 0; i < 7; i++) {
-        firstPlayer.addTile(getRandomTile());
-        secondPlayer.addTile(getRandomTile());
+        firstPlayer_.addTile(getRandomTile());
+        secondPlayer_.addTile(getRandomTile());
     }
 }

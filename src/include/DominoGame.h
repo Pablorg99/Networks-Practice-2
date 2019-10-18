@@ -20,14 +20,15 @@ class DominoGame {
         list <Tile> board_;
         vector <Tile> drawPile_;
         int tilesLeftInPile_;
-        Player firstPlayer;
-        Player secondPlayer;
+        Player firstPlayer_;
+        Player secondPlayer_;
 
         void dealTiles_();
         void fillDrawPile_();
 
     public:
-        DominoGame(); // Fill the draw pile with the 28 domino tiles
+        DominoGame(Player firstPlayer, Player secondPlayer);
+        inline vector <Tile> getDrawPile() const {return drawPile_}
         Tile getRandomTile();
 };
 

@@ -14,3 +14,16 @@ void Tile::flipTile() {
     left_ = right_;
     right_ = aux;
 }
+
+bool Tile::operator==(Tile TileAtRight) {
+    if(this->getLeft() == TileAtRight.getLeft() and this->getRight() == TileAtRight.getRight()) {
+        return true;
+    }
+
+    TileAtRight.flipTile();
+    if(this->getLeft() == TileAtRight.getLeft() and this->getRight() == TileAtRight.getRight()) {
+        return true;
+    }
+
+    return false;   
+}

@@ -35,3 +35,13 @@ TEST_CASE("Flip tile") {
     REQUIRE(validTile.getLeft() == 3);
     REQUIRE(validTile.getRight() == 2);
 }
+
+TEST_CASE("== Operator") {
+    Tile EqualTile1(2,3);
+    Tile EqualTile2(2,3);
+    Tile DifferentTile(2,4);
+    Tile EqualFlippedTile(3,2);
+    REQUIRE(EqualTile1 == EqualTile2);
+    REQUIRE_FALSE(EqualTile1 == DifferentTile);
+    REQUIRE(EqualTile1 == EqualFlippedTile);
+}
