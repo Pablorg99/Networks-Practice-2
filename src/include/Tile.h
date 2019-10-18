@@ -3,6 +3,7 @@
 
 #include <string>
 using std::to_string;
+using std::string;
 
 class Tile {
 
