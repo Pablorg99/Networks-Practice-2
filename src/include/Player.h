@@ -17,7 +17,7 @@ class Player {
         vector <Tile> myTiles_;
 
     public:
-        Player(string username, string password, vector <Tile> tilesVector);
+        Player(string username, string password);
         inline void addTile(Tile newTile) {myTiles_.push_back(newTile);}
         inline vector <Tile> getPlayerTiles() {return myTiles_;}
         string getPlayerTilesString();
