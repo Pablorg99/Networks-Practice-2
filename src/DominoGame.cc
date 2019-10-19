@@ -1,46 +1,45 @@
 #include "DominoGame.h"
-#include <vector>
-using std::vector;
 
-DominoGame::DominoGame(Player firstPlayer, Player secondPlayer):
+DominoGame::DominoGame(Player *firstPlayer, Player *secondPlayer):
     firstPlayer_(firstPlayer),
     secondPlayer_(secondPlayer)
 {
     srand(time(NULL));
     tilesLeftInPile_ = 28;
+    drawPile_.reserve(tilesLeftInPile_);
     fillDrawPile_();
     dealTiles_();
 }
 
 void DominoGame::fillDrawPile_() {
-    drawPile_.push_back(Tile(6,6));
-    drawPile_.push_back(Tile(6,5));
-    drawPile_.push_back(Tile(6,4));
-    drawPile_.push_back(Tile(6,3));
-    drawPile_.push_back(Tile(6,2));
-    drawPile_.push_back(Tile(6,1));
-    drawPile_.push_back(Tile(6,0));
-    drawPile_.push_back(Tile(5,5));
-    drawPile_.push_back(Tile(5,4));
-    drawPile_.push_back(Tile(5,3));
-    drawPile_.push_back(Tile(5,2));
-    drawPile_.push_back(Tile(5,1));
-    drawPile_.push_back(Tile(5,0));
-    drawPile_.push_back(Tile(4,4));
-    drawPile_.push_back(Tile(4,3));
-    drawPile_.push_back(Tile(4,2));
-    drawPile_.push_back(Tile(4,1));
-    drawPile_.push_back(Tile(4,0));
-    drawPile_.push_back(Tile(3,3));
-    drawPile_.push_back(Tile(3,2));
-    drawPile_.push_back(Tile(3,1));
-    drawPile_.push_back(Tile(3,0));
-    drawPile_.push_back(Tile(2,2));
-    drawPile_.push_back(Tile(2,1));
-    drawPile_.push_back(Tile(2,0));
-    drawPile_.push_back(Tile(1,1));
-    drawPile_.push_back(Tile(1,0));
-    drawPile_.push_back(Tile(0,0));
+    drawPile_.insert(drawPile_.begin(), Tile(6,6));
+    drawPile_.insert(drawPile_.begin() + 1, Tile(6,5));
+    drawPile_.insert(drawPile_.begin() + 2, Tile(6,4));
+    drawPile_.insert(drawPile_.begin() + 3, Tile(6,3));
+    drawPile_.insert(drawPile_.begin() + 4, Tile(6,2));
+    drawPile_.insert(drawPile_.begin() + 5, Tile(6,1));
+    drawPile_.insert(drawPile_.begin() + 6, Tile(6,0));
+    drawPile_.insert(drawPile_.begin() + 7, Tile(5,5));
+    drawPile_.insert(drawPile_.begin() + 8, Tile(5,4));
+    drawPile_.insert(drawPile_.begin() + 9, Tile(5,3));
+    drawPile_.insert(drawPile_.begin() + 10, Tile(5,2));
+    drawPile_.insert(drawPile_.begin() + 11, Tile(5,1));
+    drawPile_.insert(drawPile_.begin() + 12, Tile(5,0));
+    drawPile_.insert(drawPile_.begin() + 13, Tile(4,4));
+    drawPile_.insert(drawPile_.begin() + 14, Tile(4,3));
+    drawPile_.insert(drawPile_.begin() + 15, Tile(4,2));
+    drawPile_.insert(drawPile_.begin() + 16, Tile(4,1));
+    drawPile_.insert(drawPile_.begin() + 17, Tile(4,0));
+    drawPile_.insert(drawPile_.begin() + 18, Tile(3,3));
+    drawPile_.insert(drawPile_.begin() + 19, Tile(3,2));
+    drawPile_.insert(drawPile_.begin() + 20, Tile(3,1));
+    drawPile_.insert(drawPile_.begin() + 21, Tile(3,0));
+    drawPile_.insert(drawPile_.begin() + 22, Tile(2,2));
+    drawPile_.insert(drawPile_.begin() + 23, Tile(2,1));
+    drawPile_.insert(drawPile_.begin() + 24, Tile(2,0));
+    drawPile_.insert(drawPile_.begin() + 25, Tile(1,1));
+    drawPile_.insert(drawPile_.begin() + 26, Tile(1,0));
+    drawPile_.insert(drawPile_.begin() + 27, Tile(0,0));
 }
 
 Tile DominoGame::getRandomTile() {
@@ -58,7 +57,7 @@ Tile DominoGame::getRandomTile() {
 
 void DominoGame::dealTiles_() {
     for (int i = 0; i < 7; i++) {
-        firstPlayer_.addTile(getRandomTile());
-        secondPlayer_.addTile(getRandomTile());
+        firstPlayer_->addTile(getRandomTile());
+        secondPlayer_->addTile(getRandomTile());
     }
 }

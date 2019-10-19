@@ -12,7 +12,6 @@ using std::vector;
 // Auxiliar classes
 #include "Player.h"
 #include "Tile.h"
-#include "DominoGame.h"
 
 class DominoGame {
 
@@ -20,15 +19,16 @@ class DominoGame {
         list <Tile> board_;
         vector <Tile> drawPile_;
         int tilesLeftInPile_;
-        Player firstPlayer_;
-        Player secondPlayer_;
+        Player *firstPlayer_;
+        Player *secondPlayer_;
 
         void dealTiles_();
         void fillDrawPile_();
 
     public:
-        DominoGame(Player firstPlayer, Player secondPlayer);
-        inline vector <Tile> getDrawPile() const {return drawPile_}
+        DominoGame(Player *firstPlayer, Player *secondPlayer);
+        inline vector <Tile> getDrawPile() const {return drawPile_;}
+        inline int getTilesLeftInPile() const {return tilesLeftInPile_;}
         Tile getRandomTile();
 };
 
