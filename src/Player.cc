@@ -7,8 +7,9 @@ Player::Player(string username, string password) {
 
 string Player::getPlayerTilesString(){
     vector<Tile>::iterator it;
+    string playerTiles = "";
     for (it = myTiles_.begin(); it != myTiles_.end(); ++it) {
-        string playerTiles = "";
         playerTiles += it->tileToString();
     }
+    return playerTiles;
 }
