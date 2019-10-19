@@ -10,15 +10,31 @@ include_directories(public/)
 # Internal libraries
 include_directories(src/include/)
 
-list(APPEND SRC_FILES
-    DominoGame
-    Player
-    Tile
-)
 
-foreach(SRC ${SRC_FILES})
-    add_executable(${SRC}Test tests/${SRC}Test.cc)
-    add_library(${SRC}Lib src/${SRC}.cc)
-    target_link_libraries(${SRC}Test ${SRC}Lib)
-    add_test(${SRC}Test ${SRC}Test)
-endforeach()
+# Build all object files and libraries
+add_library(DominoGameLib src/DominoGame.cc)
+add_library(TileLib src/Tile.cc)
+add_library(PlayerLib src/Player.cc)
+add_library(DominoGameTestLib tests/DominoGameTest.cc)
+add_library(TileTestLib tests/TileTest.cc)
+add_library(PlayerTestLib tests/PlayerTest.cc)
+
+
+# Build TileTest executable
+add_executable(TileTest tests/TileTest.cc)
+target_link_libraries(TileTest TileLib)
+add_test(TileTest TileTest)
+
+# Build PlayerTest executable
+add_executable(PlayerTest tests/PlayerTest.cc)
+target_link_libraries(PlayerTest PlayerLib)
+target_link_libraries(PlayerTest TileLib)
+add_test(PlayerTest PlayerTest)
+
+# Build DominoGameTest executable
+add_executable(DominoGameTest tests/DominoGameTest.cc)
+target_link_libraries(DominoGameTest DominoGameLib)
+target_link_libraries(DominoGameTest DominoGameTestLib)
+target_link_libraries(DominoGameTest TileLib)
+target_link_libraries(DominoGameTest PlayerLib)
+add_test(DominoGameTest DominoGameTest)
