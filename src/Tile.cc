@@ -15,13 +15,12 @@ void Tile::flipTile() {
     right_ = aux;
 }
 
-bool Tile::operator==(Tile TileAtRight) {
+bool Tile::operator==(const Tile TileAtRight) const {
     if(this->getLeft() == TileAtRight.getLeft() and this->getRight() == TileAtRight.getRight()) {
         return true;
     }
 
-    TileAtRight.flipTile();
-    if(this->getLeft() == TileAtRight.getLeft() and this->getRight() == TileAtRight.getRight()) {
+    if(this->getLeft() == TileAtRight.getRight() and this->getRight() == TileAtRight.getLeft()) {
         return true;
     }
 
