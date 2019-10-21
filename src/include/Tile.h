@@ -18,6 +18,7 @@ class Tile {
         void flipTile();
         bool operator==(const Tile rightTile) const;
         inline string tileToString() {return "|" + to_string(left_) + "|" + to_string(right_) + "|";}
+        bool compatibleTiles(Tile tile);
 };
 
 #endif

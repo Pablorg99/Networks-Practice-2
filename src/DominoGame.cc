@@ -65,10 +65,12 @@ void DominoGame::dealTiles_() {
 bool DominoGame::checkPutAnyTile(Player *player, string boardSide){
     Tile leftside = board_.front();
     Tile rightside = board_.back();
+    rightside.flipTile();
     vector<Tile>::iterator it;
     
     for (it = player->getPlayerTiles().begin(); it != player->getPlayerTiles().end(); ++it) {
-        if(((*it) == rightside && boardSide == "rightside") || ((*it) == leftside && boardSide == "leftside")){
+        if(((*it).compatibleTiles(rightside) && boardSide == "rightside") || ((*it).compatibleTiles(leftside) && boardSide == "leftside")){
+            rightside.flipTile();
             return true;
         }
     }
@@ -78,8 +80,10 @@ bool DominoGame::checkPutAnyTile(Player *player, string boardSide){
 bool DominoGame::checkPutTile(Player *player, Tile tile, string boardSide){
     Tile leftside = board_.front();
     Tile rightside = board_.back();
+    rightside.flipTile();
    
-    if((tile == rightside && boardSide == "rightside") || (tile == leftside && boardSide == "leftside")){
+    if((tile.compatibleTiles(leftside) && boardSide == "leftside") || (tile.compatibleTiles(rightside) && boardSide == "rightside")){
+        rightside.flipTile();
         return true;
     }
 
