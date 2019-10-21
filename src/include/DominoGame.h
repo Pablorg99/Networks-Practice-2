@@ -29,7 +29,10 @@ class DominoGame {
         DominoGame(Player *firstPlayer, Player *secondPlayer);
         inline vector <Tile> getDrawPile() const {return drawPile_;}
         inline int getTilesLeftInPile() const {return tilesLeftInPile_;}
+        inline list<Tile> getBoardTiles() const {return board_;}
         Tile getRandomTile();
+        bool checkPutTile(Player *player, string boardSide);
+        void putTile(Player *player, Tile tile, string boardSide);
 };
 
 #endif //DOMINO_GAME_H
