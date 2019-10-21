@@ -62,7 +62,7 @@ void DominoGame::dealTiles_() {
     }
 }
 
-bool DominoGame::checkPutTile(Player *player, string boardSide){
+bool DominoGame::checkPutAnyTile(Player *player, string boardSide){
     Tile leftside = board_.front();
     Tile rightside = board_.back();
     vector<Tile>::iterator it;
@@ -75,12 +75,23 @@ bool DominoGame::checkPutTile(Player *player, string boardSide){
     return false;
 }
 
+bool DominoGame::checkPutTile(Player *player, Tile tile, string boardSide){
+    Tile leftside = board_.front();
+    Tile rightside = board_.back();
+   
+    if((tile == rightside && boardSide == "rightside") || (tile == leftside && boardSide == "leftside")){
+        return true;
+    }
+
+    return false;
+}
+
 void DominoGame::putTile(Player *player, Tile tile, string boardSide){
     if(boardSide == "rightside"){
-        if(checkPutTile(player,"rightside")) board_.push_back(Tile(tile));
+        if(checkPutTile(player, tile,"rightside")) board_.push_back(Tile(tile));
     }
     else
     {
-        if(checkPutTile(player, "leftside")) board_.push_front(Tile(tile));
+        if(checkPutTile(player, tile, "leftside")) board_.push_front(Tile(tile));
     }
 }

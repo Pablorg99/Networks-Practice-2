@@ -39,7 +39,7 @@ TEST_CASE("getRandomTile removes the tile from the draw pile") {
     CHECK(Game.getTilesLeftInPile() == 13);
 }
 
-TEST_CASE("checkPutTile indicates if a player can put any of its tiles in the game"){
+TEST_CASE("checkPutAnyTile indicates if a player can put any of its tiles in the game"){
     Player Pablo("pablorg99","pablorg99pass");
     Player Francis("francisjmp", "francisjmppass");
     DominoGame Game(&Pablo, &Francis);
@@ -47,7 +47,18 @@ TEST_CASE("checkPutTile indicates if a player can put any of its tiles in the ga
     Pablo.addTile(Tile(7,7));
     Game.getDrawPile().push_back(Tile(7,7));
     
-    CHECK(Game.checkPutTile(&Pablo, "rightside") == true);
+    CHECK(Game.checkPutAnyTile(&Pablo, "rightside") == true);
+ }
+
+TEST_CASE("checkPutTile indicates if a player can put a certain tile in the game"){
+    Player Pablo("pablorg99","pablorg99pass");
+    Player Francis("francisjmp", "francisjmppass");
+    DominoGame Game(&Pablo, &Francis);
+    vector<Tile>::iterator it;
+    Pablo.addTile(Tile(7,7));
+    Game.getDrawPile().push_back(Tile(7,7));
+    
+    CHECK(Game.checkPutTile(&Pablo, Tile(7,7), "rightside") == true);
  }
 
 TEST_CASE("putTile updates the player tiles and the board Tiles"){

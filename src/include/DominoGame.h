@@ -31,7 +31,8 @@ class DominoGame {
         inline int getTilesLeftInPile() const {return tilesLeftInPile_;}
         inline list<Tile> getBoardTiles() const {return board_;}
         Tile getRandomTile();
-        bool checkPutTile(Player *player, string boardSide);
+        bool checkPutAnyTile(Player *player, string boardSide);
+        bool checkPutTile(Player *player, Tile tile, string boardSide);
         void putTile(Player *player, Tile tile, string boardSide);
 };
 
