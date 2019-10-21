@@ -69,7 +69,7 @@ bool DominoGame::checkPutAnyTile(Player *player, string boardSide){
     vector<Tile>::iterator it;
     
     for (it = player->getPlayerTiles().begin(); it != player->getPlayerTiles().end(); ++it) {
-        if(((*it).compatibleTiles(rightside) && boardSide == "rightside") || ((*it).compatibleTiles(leftside) && boardSide == "leftside")){
+        if((it->compatibleTiles(rightside) && boardSide == "rightside") || ((*it).compatibleTiles(leftside) && boardSide == "leftside")){
             rightside.flipTile();
             return true;
         }

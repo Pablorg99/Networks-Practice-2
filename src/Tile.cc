@@ -27,12 +27,13 @@ bool Tile::operator==(const Tile TileAtRight) const {
     return false;   
 }
 
-bool Tile::compatibleTiles(Tile tile){
-    if(this->getLeft() == tile.getLeft()){
+bool Tile::compatibleTiles(const Tile tile) const {
+    // Check left side
+    if((this->getLeft() == tile.getLeft()) or (this->getLeft() == tile.getRight())){
         return true;
     }
-    this->flipTile();
-    if(this->getLeft() == tile.getLeft()){
+    // Check right side
+    if((this->getRight() == tile.getLeft()) or (this->getRight() == tile.getRight())){
         return true;
     }
     return false;
