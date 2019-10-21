@@ -22,19 +22,20 @@ class DominoGame {
         Player *firstPlayer_;
         Player *secondPlayer_;
 
-        void dealTiles_();
         void fillDrawPile_();
 
     public:
         DominoGame(Player *firstPlayer, Player *secondPlayer);
+        void dealTiles();
         inline vector <Tile> getDrawPile() const {return drawPile_;}
         inline int getTilesLeftInPile() const {return tilesLeftInPile_;}
         inline list<Tile> getBoardTiles() const {return board_;}
         Tile getRandomTile();
-        bool checkPutAnyTile(Player *player, string boardSide);
-        bool checkPutTile(Player *player, Tile tile, string boardSide);
+        bool checkPutAnyTile(Player *player);
+        bool checkPutTile(const Tile tile);
         void putTile(Player *player, Tile tile, string boardSide);
-        inline void addTile(Tile newTile) {board_.push_back(newTile);}
+        inline void addTileAtBack(Tile newTile) {board_.push_back(newTile);}
+        inline void addTileAtFront(Tile newTile) {board_.push_front(newTile);}
 };
 
 #endif //DOMINO_GAME_H

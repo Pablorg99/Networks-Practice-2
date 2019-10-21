@@ -8,11 +8,9 @@ Tile::Tile(int leftValue, int rightValue) {
     right_ = rightValue;
 }
 
-void Tile::flipTile() {
-    int aux;
-    aux = left_;
-    left_ = right_;
-    right_ = aux;
+Tile Tile::flippedTile() {
+    Tile newTile(right_, left_);
+    return newTile;
 }
 
 bool Tile::operator==(const Tile TileAtRight) const {
@@ -27,13 +25,8 @@ bool Tile::operator==(const Tile TileAtRight) const {
     return false;   
 }
 
-bool Tile::compatibleTiles(const Tile tile) const {
-    // Check left side
-    if((this->getLeft() == tile.getLeft()) or (this->getLeft() == tile.getRight())){
-        return true;
-    }
-    // Check right side
-    if((this->getRight() == tile.getLeft()) or (this->getRight() == tile.getRight())){
+bool Tile::compatibleTile(int value) const {
+    if((this->getLeft() == value) or (this->getRight() == value)) {
         return true;
     }
     return false;

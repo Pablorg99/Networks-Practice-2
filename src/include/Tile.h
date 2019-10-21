@@ -15,10 +15,10 @@ class Tile {
         Tile(int leftValue, int rightValue);
         inline int getLeft() const {return left_;}
         inline int getRight() const {return right_;}
-        void flipTile();
+        Tile flippedTile();
         bool operator==(const Tile rightTile) const;
         inline string tileToString() {return "|" + to_string(left_) + "|" + to_string(right_) + "|";}
-        bool compatibleTiles(const Tile tile) const;
+        bool compatibleTile(int value) const;
 };
 
 #endif

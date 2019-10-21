@@ -9,7 +9,6 @@ DominoGame::DominoGame(Player *firstPlayer, Player *secondPlayer):
     tilesLeftInPile_ = 28;
     drawPile_.reserve(tilesLeftInPile_);
     fillDrawPile_();
-    dealTiles_();
 }
 
 void DominoGame::fillDrawPile_() {
@@ -56,51 +55,52 @@ Tile DominoGame::getRandomTile() {
     else throw "There are no tiles in the draw pile";
 }
 
-void DominoGame::dealTiles_() {
+void DominoGame::dealTiles() {
     for (int i = 0; i < 7; i++) {
         firstPlayer_->addTile(getRandomTile());
         secondPlayer_->addTile(getRandomTile());
     }
 }
 
-bool DominoGame::checkPutAnyTile(Player *player, string boardSide){
-    Tile leftside = board_.front();
-    Tile rightside = board_.back();
-    rightside.flipTile();
+bool DominoGame::checkPutAnyTile(Player *player) {
     vector<Tile>::iterator it;
     
     for (it = player->getPlayerTiles().begin(); it != player->getPlayerTiles().end(); ++it) {
-        if((it->compatibleTiles(rightside) && boardSide == "rightside") || ((*it).compatibleTiles(leftside) && boardSide == "leftside")){
-            rightside.flipTile();
+        if(checkPutTile(*it)) {
             return true;
         }
     }
     return false;
 }
 
-bool DominoGame::checkPutTile(Player *player, Tile tile, string boardSide){
+bool DominoGame::checkPutTile(const Tile tile) {
     Tile leftside = board_.front();
     Tile rightside = board_.back();
-    rightside.flipTile();
-   
-    if((tile.compatibleTiles(leftside) && boardSide == "leftside") || (tile.compatibleTiles(rightside) && boardSide == "rightside")){
-        rightside.flipTile();
-        return true;
+    
+    if((tile.compatibleTile(rightside.getRight())) or (tile.compatibleTile(leftside.getLeft()))) {
+            return true;
     }
-
     return false;
 }
 
-void DominoGame::putTile(Player *player, Tile tile, string boardSide){
-    if(boardSide == "rightside"){
-        if(checkPutTile(player, tile,"rightside")){
+
+void DominoGame::putTile(Player *player, Tile tile, string boardside) {
+    if(boardside == "right side"){
+        if(checkPutTile(tile)){
             board_.push_back(Tile(tile));
-        } 
-    
+        }
+        else if(checkPutTile(tile.flippedTile())) {
+            board_.push_back(tile.flippedTile());
+        }
     }
     else
     {
-        if(checkPutTile(player, tile, "leftside")) board_.push_front(Tile(tile));
+        if(checkPutTile(tile)) {
+            board_.push_front(Tile(tile));
+        }
+        else if(checkPutTile(tile.flippedTile())) {
+            board_.push_front(tile.flippedTile());
+        }
     }
     player->deleteTile(tile);
 }

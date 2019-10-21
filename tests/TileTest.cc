@@ -31,9 +31,8 @@ TEST_CASE("Flip tile") {
     Tile validTile(2,3);
     CHECK(validTile.getLeft() == 2);
     CHECK(validTile.getRight() == 3);
-    CHECK_NOTHROW(validTile.flipTile());
-    CHECK(validTile.getLeft() == 3);
-    CHECK(validTile.getRight() == 2);
+    CHECK(validTile.flippedTile().getLeft() == 3);
+    CHECK(validTile.flippedTile().getRight() == 2);
 }
 
 TEST_CASE("== Operator") {
