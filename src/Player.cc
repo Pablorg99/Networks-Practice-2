@@ -1,4 +1,5 @@
 #include "Player.h"
+#include <algorithm>
 
 Player::Player(string username, string password) {
     username_ = username;
@@ -12,4 +13,8 @@ string Player::getPlayerTilesString(){
         playerTiles += it->tileToString();
     }
     return playerTiles;
+}
+
+void Player::deleteTile(Tile tileToRemove){
+    myTiles_.erase(std::remove(myTiles_.begin(), myTiles_.end(), tileToRemove), myTiles_.end());
 }

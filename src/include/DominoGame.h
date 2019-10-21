@@ -34,6 +34,7 @@ class DominoGame {
         bool checkPutAnyTile(Player *player, string boardSide);
         bool checkPutTile(Player *player, Tile tile, string boardSide);
         void putTile(Player *player, Tile tile, string boardSide);
+        inline void addTile(Tile newTile) {board_.push_back(newTile);}
 };
 
 #endif //DOMINO_GAME_H

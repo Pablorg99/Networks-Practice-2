@@ -1,4 +1,5 @@
 #include "DominoGame.h"
+#include<algorithm>
 
 DominoGame::DominoGame(Player *firstPlayer, Player *secondPlayer):
     firstPlayer_(firstPlayer),
@@ -92,10 +93,14 @@ bool DominoGame::checkPutTile(Player *player, Tile tile, string boardSide){
 
 void DominoGame::putTile(Player *player, Tile tile, string boardSide){
     if(boardSide == "rightside"){
-        if(checkPutTile(player, tile,"rightside")) board_.push_back(Tile(tile));
+        if(checkPutTile(player, tile,"rightside")){
+            board_.push_back(Tile(tile));
+        } 
+    
     }
     else
     {
         if(checkPutTile(player, tile, "leftside")) board_.push_front(Tile(tile));
     }
+    player->deleteTile(tile);
 }

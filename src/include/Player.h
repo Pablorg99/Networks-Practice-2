@@ -19,6 +19,7 @@ class Player {
     public:
         Player(string username, string password);
         inline void addTile(Tile newTile) {myTiles_.push_back(newTile);}
+        void deleteTile(Tile tileToRemove);
         inline vector <Tile> getPlayerTiles() {return myTiles_;}
         string getPlayerTilesString();
 };
