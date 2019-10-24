@@ -1,5 +1,8 @@
 #include "DominoGame.h"
 
+#include <iostream>
+using namespace std;
+
 DominoGame::DominoGame(Player *firstPlayer, Player *secondPlayer):
     firstPlayer_(firstPlayer),
     secondPlayer_(secondPlayer)
@@ -42,10 +45,10 @@ void DominoGame::fillDrawPile_() {
 }
 
 string DominoGame::getBoardString() const {
-    list<Tile>::iterator tile;
     string boardTiles = "";
+    list<Tile>::iterator tile;
     for (tile = getBoard().begin(); tile != getBoard().end(); tile++) {
-        boardTiles += tile->tileToString();
+        cerr << "No salgo de aquí" << endl;
     }
     return boardTiles;
 }

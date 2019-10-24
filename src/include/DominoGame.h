@@ -28,7 +28,7 @@ class DominoGame {
         DominoGame(Player *firstPlayer, Player *secondPlayer);
         inline vector <Tile> getDrawPile() const {return drawPile_;}
         inline int getTilesLeftInPile() const {return tilesLeftInPile_;}
-        inline list<Tile> getBoard() const {return board_;}
+        inline list <Tile> getBoard() const {return board_;}
         string getBoardString() const;
         void dealTiles();
         bool canPutAtLeastOneTile(Player *player);
