@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(Networks-Practice-2)
 enable_testing()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pedantic -Wall -Wextra")
 
 # Public libraries
 include_directories(public/)
