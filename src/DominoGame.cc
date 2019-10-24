@@ -1,5 +1,4 @@
 #include "DominoGame.h"
-#include<algorithm>
 
 DominoGame::DominoGame(Player *firstPlayer, Player *secondPlayer):
     firstPlayer_(firstPlayer),
@@ -63,10 +62,10 @@ void DominoGame::dealTiles() {
 }
 
 bool DominoGame::canPutAtLeastOneTile(Player *player) {
-    vector<Tile>::iterator it;
+    vector<Tile>::iterator tile;
     
-    for (it = player->getPlayerTiles().begin(); it != player->getPlayerTiles().end(); ++it) {
-        if(canPutTile(*it)) {
+    for (tile = player->getPlayerTiles().begin(); tile != player->getPlayerTiles().end(); ++tile) {
+        if(canPutTile(*tile)) {
             return true;
         }
     }
@@ -85,22 +84,30 @@ bool DominoGame::canPutTile(const Tile tile) {
 
 
 void DominoGame::putTile(Player *player, Tile tile, string boardside) {
-    if(boardside == "right side"){
+    if(boardside == "right side") {
         if(canPutTile(tile)){
-            board_.push_back(Tile(tile));
+            addTileAtBack(tile);
         }
         else if(canPutTile(tile.flippedTile())) {
-            board_.push_back(tile.flippedTile());
+            addTileAtBack(tile.flippedTile());
         }
-    }
-    else
-    {
+    } 
+    else {
         if(canPutTile(tile)) {
-            board_.push_front(Tile(tile));
+            addTileAtFront(Tile(tile));
         }
         else if(canPutTile(tile.flippedTile())) {
-            board_.push_front(tile.flippedTile());
+            addTileAtFront(tile.flippedTile());
         }
     }
     player->deleteTile(tile);
+}
+
+string DominoGame::getBoardString() const {
+    list<Tile>::iterator tile;
+    string boardTiles = "";
+    for (tile = getBoard().begin(); tile != getBoard().end(); tile++) {
+        boardTiles += tile->tileToString();
+    }
+    return boardTiles;
 }

@@ -29,6 +29,7 @@ class DominoGame {
         inline vector <Tile> getDrawPile() const {return drawPile_;}
         inline int getTilesLeftInPile() const {return tilesLeftInPile_;}
         inline list<Tile> getBoard() const {return board_;}
+        string getBoardString() const;
         void dealTiles();
         bool canPutAtLeastOneTile(Player *player);
         Tile drawRandomTile();

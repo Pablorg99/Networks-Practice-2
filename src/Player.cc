@@ -7,10 +7,10 @@ Player::Player(string username, string password) {
 }
 
 string Player::getPlayerTilesString(){
-    vector<Tile>::iterator it;
+    vector<Tile>::iterator tile;
     string playerTiles = "";
-    for (it = myTiles_.begin(); it != myTiles_.end(); ++it) {
-        playerTiles += it->tileToString();
+    for (tile = myTiles_.begin(); tile != myTiles_.end(); ++tile) {
+        playerTiles += tile->tileToString();
     }
     return playerTiles;
 }
