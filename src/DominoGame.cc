@@ -41,17 +41,13 @@ void DominoGame::fillDrawPile_() {
     drawPile_.insert(drawPile_.begin() + 27, Tile(0,0));
 }
 
-Tile DominoGame::drawRandomTile() {
-    if (tilesLeftInPile_ > 0) {
-        int randomTileIndex = rand() % tilesLeftInPile_;
-
-        Tile auxiliarTile = drawPile_[randomTileIndex];
-        drawPile_.erase(drawPile_.begin() + randomTileIndex);
-        tilesLeftInPile_ = tilesLeftInPile_ - 1;
-
-        return auxiliarTile;
+string DominoGame::getBoardString() const {
+    list<Tile>::iterator tile;
+    string boardTiles = "";
+    for (tile = getBoard().begin(); tile != getBoard().end(); tile++) {
+        boardTiles += tile->tileToString();
     }
-    else throw "There are no tiles in the draw pile";
+    return boardTiles;
 }
 
 void DominoGame::dealTiles() {
@@ -72,16 +68,18 @@ bool DominoGame::canPutAtLeastOneTile(Player *player) {
     return false;
 }
 
-bool DominoGame::canPutTile(const Tile tile) {
-    Tile leftside = board_.front();
-    Tile rightside = board_.back();
-    
-    if((tile.compatibleTile(rightside.getRight())) or (tile.compatibleTile(leftside.getLeft()))) {
-            return true;
-    }
-    return false;
-}
+Tile DominoGame::drawRandomTile() {
+    if (tilesLeftInPile_ > 0) {
+        int randomTileIndex = rand() % tilesLeftInPile_;
 
+        Tile auxiliarTile = drawPile_[randomTileIndex];
+        drawPile_.erase(drawPile_.begin() + randomTileIndex);
+        tilesLeftInPile_ = tilesLeftInPile_ - 1;
+
+        return auxiliarTile;
+    }
+    else throw "There are no tiles in the draw pile";
+}
 
 void DominoGame::putTile(Player *player, Tile tile, string boardside) {
     if(boardside == "right side") {
@@ -103,11 +101,12 @@ void DominoGame::putTile(Player *player, Tile tile, string boardside) {
     player->deleteTile(tile);
 }
 
-string DominoGame::getBoardString() const {
-    list<Tile>::iterator tile;
-    string boardTiles = "";
-    for (tile = getBoard().begin(); tile != getBoard().end(); tile++) {
-        boardTiles += tile->tileToString();
+bool DominoGame::canPutTile(const Tile tile) {
+    Tile leftside = board_.front();
+    Tile rightside = board_.back();
+    
+    if((tile.compatibleTile(rightside.getRight())) or (tile.compatibleTile(leftside.getLeft()))) {
+            return true;
     }
-    return boardTiles;
+    return false;
 }
