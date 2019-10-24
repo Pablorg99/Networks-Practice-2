@@ -77,12 +77,38 @@ TEST_CASE("putTile updates the number of player tiles and tiles onboard"){
     Player Pablo("pablorg99","pablorg99pass");
     Player Francis("francisjmp", "francisjmppass");
     DominoGame Game(&Pablo, &Francis);
-    Game.dealTiles();
     Pablo.addTile(Tile(5,4));
-    CHECK(Pablo.getPlayerTiles().size() == 8);
+    CHECK(Pablo.getPlayerTiles().size() == 1);
     Game.addTileAtBack(Tile(4,4));
     CHECK(Game.getBoard().size() == 1);
     Game.putTile(&Pablo, Tile(5,4), "right side");
-    CHECK(Pablo.getPlayerTiles().size() == 7);
+    CHECK(Pablo.getPlayerTiles().size() == 0);
     CHECK(Game.getBoard().size() == 2);
+}
+
+TEST_CASE("findTileInTiles shound return if a certain tile is in a vector of tiles"){
+    Player Pablo("pablorg99","pablorg99pass");
+    Player Francis("francisjmp", "francisjmppass");
+    DominoGame Game(&Pablo, &Francis);
+    vector<Tile> vectorTiles;
+    vectorTiles.push_back(Tile(6,5));
+    CHECK(Game.findTileInTiles(vectorTiles, Tile(6,5)));
+}
+
+TEST_CASE("firstPlayerToPlay should return the player with the greatest double"){
+    Player Pablo("pablorg99","pablorg99pass");
+    Player Francis("francisjmp", "francisjmppass");
+    DominoGame Game(&Pablo, &Francis);
+    Game.dealTiles();
+    Pablo.addTile(Tile(6,6));
+    CHECK(Game.firstPlayerToPlay() == Pablo);
+}
+
+TEST_CASE("firstPlayerToPlay should return the player with the 6-5 if no player has a double"){
+    Player Pablo("pablorg99","pablorg99pass");
+    Player Francis("francisjmp", "francisjmppass");
+    DominoGame Game(&Pablo, &Francis);
+    Pablo.addTile(Tile(6,5));
+    CHECK(Game.findTileInTiles(Pablo.getPlayerTiles(), Tile(6,5)));
+    CHECK(Game.firstPlayerToPlay() == Pablo);
 }

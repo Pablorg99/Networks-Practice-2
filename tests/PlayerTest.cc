@@ -34,3 +34,13 @@ TEST_CASE("Getting tile as string from player is OK"){
     newPlayer.addTile(Tile(1,6));
     CHECK(newPlayer.getPlayerTilesString() == "|2|4||3|3||1|6|");
 }
+
+TEST_CASE("greatestTileValue should return the addition of the greatest tile values"){
+    Player newPlayer("player", "playerpass");
+    newPlayer.addTile(Tile(2,4));
+    CHECK(newPlayer.greatestTileValue() == 6);
+    newPlayer.addTile(Tile(6,6));
+    CHECK(newPlayer.greatestTileValue() == 12);
+    newPlayer.addTile(Tile(6,4));
+    CHECK(newPlayer.greatestTileValue() == 12);
+}

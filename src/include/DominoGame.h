@@ -37,6 +37,8 @@ class DominoGame {
         bool canPutTile(const Tile tile);
         inline void addTileAtBack(Tile newTile) {board_.push_back(newTile);}
         inline void addTileAtFront(Tile newTile) {board_.push_front(newTile);}
+        bool findTileInTiles(const vector<Tile> tilesVector,const Tile tileToFind);
+        Player firstPlayerToPlay();
 };
 
 #endif //DOMINO_GAME_H

@@ -22,6 +22,10 @@ class Player {
         void deleteTile(Tile tileToRemove);
         inline vector <Tile> getPlayerTiles() {return myTiles_;}
         string getPlayerTilesString();
+        inline string getUsername() const {return username_;}
+        inline string getPassword() const {return password_;}
+        bool operator==(const Player playerAtRight) const;
+        int greatestTileValue();
 };
 
 #endif

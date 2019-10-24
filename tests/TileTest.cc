@@ -44,3 +44,8 @@ TEST_CASE("== Operator") {
     CHECK_FALSE(EqualTile1 == DifferentTile);
     CHECK(EqualTile1 == EqualFlippedTile);
 }
+
+TEST_CASE("Get tile value"){
+    Tile tile(2,4);
+    CHECK(tile.getTileValue() == 6);
+}
