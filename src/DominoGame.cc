@@ -110,3 +110,30 @@ bool DominoGame::canPutTile(const Tile tile) {
     }
     return false;
 }
+
+bool DominoGame::findTileInTiles(const vector<Tile> tilesVector, const Tile tileToFind){
+    if(find(tilesVector.begin(), tilesVector.end(), tileToFind) != tilesVector.end()){
+        return true;
+    }
+    return false;
+}
+
+Player DominoGame::firstPlayerToPlay(){
+    vector<Tile> firstPlayerTiles = firstPlayer_->getPlayerTiles();
+    vector<Tile> secondPlayerTiles = secondPlayer_->getPlayerTiles();
+    for (int tileIndex = 6; tileIndex > 0; ++tileIndex) {
+        if(findTileInTiles(firstPlayerTiles, Tile(tileIndex,tileIndex))){
+            return *firstPlayer_;
+        }
+        else if(findTileInTiles(secondPlayerTiles, Tile(tileIndex,tileIndex))){
+            return *secondPlayer_;
+        }
+    }
+    if(findTileInTiles(firstPlayerTiles, Tile(6,5))){
+            return *firstPlayer_;
+    }
+    else {
+        return *secondPlayer_;
+    }
+}
+

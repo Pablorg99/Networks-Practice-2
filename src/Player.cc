@@ -18,3 +18,10 @@ string Player::getPlayerTilesString(){
 void Player::deleteTile(Tile tileToRemove){
     myTiles_.erase(std::remove(myTiles_.begin(), myTiles_.end(), tileToRemove), myTiles_.end());
 }
+
+bool Player::operator==(const Player playerAtRight) const {
+    if(this->getUsername() == playerAtRight.getUsername() and this->getPassword() == playerAtRight.getPassword()) {
+        return true;
+    }        
+    return false;   
+}
