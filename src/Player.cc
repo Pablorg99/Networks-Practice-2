@@ -25,3 +25,16 @@ bool Player::operator==(const Player playerAtRight) const {
     }        
     return false;   
 }
+
+int Player::greatestTileValue(){
+    vector<Tile> playerTiles = this->getPlayerTiles();
+    int greatestTileValue = 0;
+    vector<Tile>::iterator tile;
+    for (tile = playerTiles.begin(); tile != playerTiles.end(); ++tile) {
+        int tileValue = (*tile).getTileValue();
+        if(tileValue > greatestTileValue){
+            greatestTileValue = tileValue;
+        }
+    }
+    return greatestTileValue;
+}

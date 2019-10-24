@@ -25,6 +25,7 @@ class Tile {
         inline string tileToString() {return "|" + to_string(left_) + "|" + to_string(right_) + "|";}
         bool compatibleTile(int value) const;
         bool findTileInTiles(const vector<Tile> tilesVector,const Tile tileToFind);
+        inline int getTileValue() { return left_ + right_;}
 };
 
 #endif

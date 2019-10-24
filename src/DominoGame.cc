@@ -129,10 +129,12 @@ Player DominoGame::firstPlayerToPlay(){
             return *secondPlayer_;
         }
     }
-    if(findTileInTiles(firstPlayerTiles, Tile(6,5))){
-            return *firstPlayer_;
+    int firstPlayerGreatestTileValue = firstPlayer_->greatestTileValue();
+    int secondPlayerGreatestTileValue = secondPlayer_->greatestTileValue();
+    if(firstPlayerGreatestTileValue > secondPlayerGreatestTileValue){
+        return *firstPlayer_;
     }
-    else {
+    else{
         return *secondPlayer_;
     }
 }

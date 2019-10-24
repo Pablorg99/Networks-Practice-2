@@ -25,6 +25,7 @@ class Player {
         inline string getUsername() const {return username_;}
         inline string getPassword() const {return password_;}
         bool operator==(const Player playerAtRight) const;
+        int greatestTileValue();
 };
 
 #endif
