@@ -46,9 +46,10 @@ void DominoGame::fillDrawPile_() {
 
 string DominoGame::getBoardString() const {
     string boardTiles = "";
-    list<Tile>::iterator tile;
+    list<Tile>::iterator tile = getBoard().begin();
+    tile = getBoard().end();
     for (tile = getBoard().begin(); tile != getBoard().end(); tile++) {
-        cerr << "No salgo de aquí" << endl;
+        boardTiles += tile->tileToString();
     }
     return boardTiles;
 }
