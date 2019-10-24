@@ -32,12 +32,11 @@ TEST_CASE("getBoardString returns a formated string with all tiles in the table"
     Player Francis("francisjmp", "francisjmppass");
     DominoGame Game(&Pablo, &Francis);
     
-    Game.addTileAtBack(Tile(6,5));
+    Game.addTileAtBack(Tile(3,5));
     Game.addTileAtBack(Tile(4,4));
-    Game.addTileAtBack(Tile(2,1));
-    Game.addTileAtBack(Tile(1,5));
-    cerr << Game.getBoard().size() << endl;
-    CHECK(Game.getBoardString() == "|6|5||4|4||2|1||1|5|");
+    Game.addTileAtFront(Tile(2,1));
+    Game.addTileAtFront(Tile(1,5));
+    CHECK(Game.getBoardString() == "|1|5||2|1||3|5||4|4|");
 }
 
 TEST_CASE("dealTiles deal 7 tiles to each player from the draw pile") {
@@ -99,13 +98,11 @@ TEST_CASE("putTile updates the number of player tiles and tiles onboard"){
     Player Pablo("pablorg99","pablorg99pass");
     Player Francis("francisjmp", "francisjmppass");
     DominoGame Game(&Pablo, &Francis);
-    
-    Game.dealTiles();
     Pablo.addTile(Tile(5,4));
-    CHECK(Pablo.getPlayerTiles().size() == 8);
+    CHECK(Pablo.getPlayerTiles().size() == 1);
     Game.addTileAtBack(Tile(4,4));
     CHECK(Game.getBoard().size() == 1);
     Game.putTile(&Pablo, Tile(5,4), "right side");
-    CHECK(Pablo.getPlayerTiles().size() == 7);
+    CHECK(Pablo.getPlayerTiles().size() == 0);
     CHECK(Game.getBoard().size() == 2);
 }
