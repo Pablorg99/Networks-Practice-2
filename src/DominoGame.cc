@@ -42,7 +42,7 @@ void DominoGame::fillDrawPile_() {
     drawPile_.insert(drawPile_.begin() + 27, Tile(0,0));
 }
 
-Tile DominoGame::getRandomTile() {
+Tile DominoGame::drawRandomTile() {
     if (tilesLeftInPile_ > 0) {
         int randomTileIndex = rand() % tilesLeftInPile_;
 
@@ -57,23 +57,23 @@ Tile DominoGame::getRandomTile() {
 
 void DominoGame::dealTiles() {
     for (int i = 0; i < 7; i++) {
-        firstPlayer_->addTile(getRandomTile());
-        secondPlayer_->addTile(getRandomTile());
+        firstPlayer_->addTile(drawRandomTile());
+        secondPlayer_->addTile(drawRandomTile());
     }
 }
 
-bool DominoGame::checkPutAnyTile(Player *player) {
+bool DominoGame::canPutAtLeastOneTile(Player *player) {
     vector<Tile>::iterator it;
     
     for (it = player->getPlayerTiles().begin(); it != player->getPlayerTiles().end(); ++it) {
-        if(checkPutTile(*it)) {
+        if(canPutTile(*it)) {
             return true;
         }
     }
     return false;
 }
 
-bool DominoGame::checkPutTile(const Tile tile) {
+bool DominoGame::canPutTile(const Tile tile) {
     Tile leftside = board_.front();
     Tile rightside = board_.back();
     
@@ -86,19 +86,19 @@ bool DominoGame::checkPutTile(const Tile tile) {
 
 void DominoGame::putTile(Player *player, Tile tile, string boardside) {
     if(boardside == "right side"){
-        if(checkPutTile(tile)){
+        if(canPutTile(tile)){
             board_.push_back(Tile(tile));
         }
-        else if(checkPutTile(tile.flippedTile())) {
+        else if(canPutTile(tile.flippedTile())) {
             board_.push_back(tile.flippedTile());
         }
     }
     else
     {
-        if(checkPutTile(tile)) {
+        if(canPutTile(tile)) {
             board_.push_front(Tile(tile));
         }
-        else if(checkPutTile(tile.flippedTile())) {
+        else if(canPutTile(tile.flippedTile())) {
             board_.push_front(tile.flippedTile());
         }
     }

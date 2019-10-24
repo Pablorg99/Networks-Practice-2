@@ -26,14 +26,14 @@ class DominoGame {
 
     public:
         DominoGame(Player *firstPlayer, Player *secondPlayer);
-        void dealTiles();
         inline vector <Tile> getDrawPile() const {return drawPile_;}
         inline int getTilesLeftInPile() const {return tilesLeftInPile_;}
-        inline list<Tile> getBoardTiles() const {return board_;}
-        Tile getRandomTile();
-        bool checkPutAnyTile(Player *player);
-        bool checkPutTile(const Tile tile);
+        inline list<Tile> getBoard() const {return board_;}
+        void dealTiles();
+        bool canPutAtLeastOneTile(Player *player);
+        Tile drawRandomTile();
         void putTile(Player *player, Tile tile, string boardSide);
+        bool canPutTile(const Tile tile);
         inline void addTileAtBack(Tile newTile) {board_.push_back(newTile);}
         inline void addTileAtFront(Tile newTile) {board_.push_front(newTile);}
 };
