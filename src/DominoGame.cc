@@ -121,7 +121,7 @@ bool DominoGame::findTileInTiles(const vector<Tile> tilesVector, const Tile tile
 Player DominoGame::firstPlayerToPlay(){
     vector<Tile> firstPlayerTiles = firstPlayer_->getPlayerTiles();
     vector<Tile> secondPlayerTiles = secondPlayer_->getPlayerTiles();
-    for (int tileIndex = 6; tileIndex > 0; ++tileIndex) {
+    for (int tileIndex = 6; tileIndex > 0; --tileIndex) {
         if(findTileInTiles(firstPlayerTiles, Tile(tileIndex,tileIndex))){
             return *firstPlayer_;
         }
