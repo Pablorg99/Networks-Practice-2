@@ -6,6 +6,7 @@
 #include "Player.h"
 
 #include <iostream>
+using namespace std;
 
 TEST_CASE("DominoGame Constructor") {
     Player Pablo("pablorg99", "pablorg99pass");
@@ -15,10 +16,6 @@ TEST_CASE("DominoGame Constructor") {
     CHECK(Game.getDrawPile().size() == 28);
     CHECK(Pablo.getPlayerTiles().size() == 0);
     CHECK(Francis.getPlayerTiles().size() == 0);
-    Game.dealTiles();
-    CHECK(Game.getDrawPile().size() == 14);
-    CHECK(Pablo.getPlayerTiles().size() == 7);
-    CHECK(Francis.getPlayerTiles().size() == 7);
 }
 
 TEST_CASE("getTilesLeftInPile is equal to drawPile size") {
@@ -28,6 +25,43 @@ TEST_CASE("getTilesLeftInPile is equal to drawPile size") {
     
     CHECK(Game.getDrawPile().size() == 28);
     CHECK(Game.getTilesLeftInPile() == 28);
+}
+
+TEST_CASE("getBoardString returns a formated string with all tiles in the table") {
+    Player Pablo("pablorg99", "pablorg99pass");
+    Player Francis("francisjmp", "francisjmppass");
+    DominoGame Game(&Pablo, &Francis);
+    
+    Game.addTileAtBack(Tile(3,5));
+    Game.addTileAtBack(Tile(4,4));
+    Game.addTileAtFront(Tile(2,1));
+    Game.addTileAtFront(Tile(1,5));
+    CHECK(Game.getBoardString() == "|1|5||2|1||3|5||4|4|");
+}
+
+TEST_CASE("dealTiles deal 7 tiles to each player from the draw pile") {
+    Player Pablo("pablorg99", "pablorg99pass");
+    Player Francis("francisjmp", "francisjmppass");
+    DominoGame Game(&Pablo, &Francis);
+    
+    Game.dealTiles();
+    CHECK(Game.getTilesLeftInPile() == 14);
+    CHECK(Pablo.getPlayerTiles().size() == 7);
+    CHECK(Francis.getPlayerTiles().size() == 7);
+}
+
+TEST_CASE("canPutAtLeastOneTile indicates if a player can put any of its tiles in the game"){
+    Player Pablo("pablorg99","pablorg99pass");
+    Player Francis("francisjmp", "francisjmppass");
+    DominoGame Game(&Pablo, &Francis);
+    
+    Game.addTileAtBack(Tile(3,4));
+    Game.addTileAtBack(Tile(4,5));
+    Game.addTileAtBack(Tile(5,6));
+    Pablo.addTile(Tile(1,2));
+    CHECK_FALSE(Game.canPutAtLeastOneTile(&Pablo));
+    Pablo.addTile(Tile(3,5));
+    CHECK(Game.canPutAtLeastOneTile(&Pablo));
 }
 
 TEST_CASE("drawRandomTile removes the tile from the draw pile") {
@@ -43,19 +77,6 @@ TEST_CASE("drawRandomTile removes the tile from the draw pile") {
     CHECK(Game.getTilesLeftInPile() == 27);
 }
 
-TEST_CASE("canPutAtLeastOneTile indicates if a player can put any of its tiles in the game"){
-    Player Pablo("pablorg99","pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
-    DominoGame Game(&Pablo, &Francis);
-
-    Game.addTileAtBack(Tile(3,4));
-    Game.addTileAtBack(Tile(4,5));
-    Game.addTileAtBack(Tile(5,6));
-    Pablo.addTile(Tile(1,2));
-    CHECK_FALSE(Game.canPutAtLeastOneTile(&Pablo));
-    Pablo.addTile(Tile(3,5));
-    CHECK(Game.canPutAtLeastOneTile(&Pablo));
-}
 
 TEST_CASE("canPutTile indicates if a tile can be put in the board"){
     Player Pablo("pablorg99","pablorg99pass");
