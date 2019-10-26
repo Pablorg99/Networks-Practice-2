@@ -7,7 +7,7 @@
 #include <sys/socket.h>
 // sockaddr_in structure
 #include <netinet/in.h>
-// htons()
+// htons(), inet_addr()
 #include <arpa/inet.h>
 // close()
 #include <unistd.h>
@@ -16,6 +16,7 @@
 
 #include <string>
 using std::string;
+
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -33,7 +34,9 @@ class Client {
 
         inline int getClientSocketDescriptor_() {return clientSocketDescriptor_;}
         inline const struct sockaddr * getFormattedServerSocketData_() {return (struct sockaddr *) &serverSocketData_;}
-        inline socklen_t getServerSocketDataSize_() {return sizeof(serverSocketData_);}
+        inline socklen_t getSizeOfServerSocketData_() {return sizeof(serverSocketData_);}
+        inline fd_set * getReaderFileDescriptor_() {return &readerFileDescriptor_;}
+        inline fd_set * getAuxiliarFileDescriptor_() {return &auxiliarFileDescriptor_;}
         
         void openClientSocket_();
         void fillServerSocketDataStructure_(string serverIpAddress, int serverPortNumber);

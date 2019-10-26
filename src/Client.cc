@@ -11,7 +11,7 @@ void Client::openClientSocket_() {
     clientSocketDescriptor_ = socket(AF_INET, SOCK_STREAM, 0);
     if(clientSocketDescriptor_ == -1) {
         cerr << "Could not open client socket" << endl;
-        exit(0);
+        exit(1);
     }
 }
 
@@ -22,10 +22,10 @@ void Client::fillServerSocketDataStructure_(string serverIpAddress, int serverPo
 }
 
 void Client::requestServerConnection_() {
-    int connectionResult = connect(getClientSocketDescriptor_(), getFormattedServerSocketData_(), getServerSocketDataSize_());
+    int connectionResult = connect(getClientSocketDescriptor_(), getFormattedServerSocketData_(), getSizeOfServerSocketData_());
     if (connectionResult == -1) {
         cerr << "Connection failure" << endl;
-        exit(0);
+        exit(1);
     }
 }
 
@@ -58,17 +58,21 @@ void Client::startComunication() {
 }
 
 void Client::readServerMessage_(bool &endComunication) {
-    bzero(messageBuffer_, sizeof(messageBuffer_));
+    memset(messageBuffer_, 0, sizeof(messageBuffer_));
     recv(clientSocketDescriptor_, messageBuffer_, sizeof(messageBuffer_), 0);
             
     cout << messageBuffer_ << endl;
     handleServerErrorMessages_(endComunication);
 }
 
-void Client::handleServerErrorMessages_(bool &endComunication) {}
+void Client::handleServerErrorMessages_(bool &endComunication) {
+    if(strcmp(messageBuffer_, "Too many clients connected\n")) {
+        endComunication = true;
+    }
+}
 
 void Client::sendMessageToServer_(bool &endComunication) {
-    bzero(messageBuffer_, sizeof(messageBuffer_));
+    memset(messageBuffer_, 0, sizeof(messageBuffer_));
     fgets(messageBuffer_, sizeof(messageBuffer_), stdin);
 
     handleClientMessage_(endComunication);
