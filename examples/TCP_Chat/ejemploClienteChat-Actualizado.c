@@ -16,10 +16,10 @@ int main ( )
 	/*---------------------------------------------------- 
 		Descriptor del socket y buffer de datos                
 	-----------------------------------------------------*/
-	int sd;
-	struct sockaddr_in sockname;
+	int clientSocketDescriptor;
+	struct sockaddr_in clientSocketData;
 	char buffer[250];
-	socklen_t len_sockname;
+	socklen_t len_clientSocketData;
     fd_set readfds, auxfds;
     int salida;
     int fin = 0;
@@ -28,8 +28,8 @@ int main ( )
 	/* --------------------------------------------------
 		Se abre el socket 
 	---------------------------------------------------*/
-  	sd = socket (AF_INET, SOCK_STREAM, 0);
-	if (sd == -1)
+  	clientSocketDescriptor = socket (AF_INET, SOCK_STREAM, 0);
+	if (clientSocketDescriptor == -1)
 	{
 		perror("No se puede abrir el socket cliente\n");
     		exit (1);	
@@ -41,16 +41,16 @@ int main ( )
 		Se rellenan los campos de la estructura con la IP del 
 		servidor y el puerto del servicio que solicitamos
 	-------------------------------------------------------------------*/
-	sockname.sin_family = AF_INET;
-	sockname.sin_port = htons(2000);
-	sockname.sin_addr.s_addr =  inet_addr("172.16.218.20");
+	clientSocketData.sin_family = AF_INET;
+	clientSocketData.sin_port = htons(2000);
+	clientSocketData.sin_addr.s_addr =  inet_addr("172.16.218.20");
 
 	/* ------------------------------------------------------------------
 		Se solicita la conexión con el servidor
 	-------------------------------------------------------------------*/
-	len_sockname = sizeof(sockname);
+	len_clientSocketData = sizeof(clientSocketData);
 	
-	if (connect(sd, (struct sockaddr *)&sockname, len_sockname) == -1)
+	if (connect(clientSocketDescriptor, (struct sockaddr *)&clientSocketData, len_clientSocketData) == -1)
 	{
 		perror ("Error de conexión");
 		exit(1);
@@ -61,7 +61,7 @@ int main ( )
     FD_ZERO(&readfds);
     
     FD_SET(0,&readfds);
-    FD_SET(sd,&readfds);
+    FD_SET(clientSocketDescriptor,&readfds);
 
     
 	/* ------------------------------------------------------------------
@@ -70,13 +70,13 @@ int main ( )
 	do
 	{
         auxfds = readfds;
-        salida = select(sd+1,&auxfds,NULL,NULL,NULL);
+        salida = select(clientSocketDescriptor+1,&auxfds,NULL,NULL,NULL);
         
-        //Tengo mensaje desde el servidor
-        if(FD_ISSET(sd, &auxfds)){
+        //Tengo mensaje del servidor
+        if(FD_ISSET(clientSocketDescriptor, &auxfds)){
             
-            bzero(buffer,sizeof(buffer));
-            recv(sd,buffer,sizeof(buffer),0);
+            clearBuffer(buffer,sizeof(buffer));
+            recv(clientSocketDescriptor,buffer,sizeof(buffer),0);
             
             printf("\n%s\n",buffer);
             
@@ -92,7 +92,7 @@ int main ( )
             
             //He introducido información por teclado
             if(FD_ISSET(0,&auxfds)){
-                bzero(buffer,sizeof(buffer));
+                clearBuffer(buffer,sizeof(buffer));
                 
                 fgets(buffer,sizeof(buffer),stdin);
                 
@@ -101,7 +101,7 @@ int main ( )
                 
                 }
                 
-                send(sd,buffer,sizeof(buffer),0);
+                send(clientSocketDescriptor,buffer,sizeof(buffer),0);
                 
             }
             
@@ -112,7 +112,7 @@ int main ( )
 				
     }while(fin == 0);
 		
-    close(sd);
+    close(clientSocketDescriptor);
 
     return 0;
 		
