@@ -106,7 +106,7 @@ void Server::searchForMatch() {
 }
 
 void Server::startGame(int clientSocketDescriptor){
-    vector<int> gamePlayers;
+    vector <int> gamePlayers;
     gamePlayers.push_back(clientSocketDescriptor);
 
     if (this->getPlayersQueue_().size() > 0){
@@ -164,6 +164,6 @@ void Server::clientMessageHandler(int clientSocketDescriptor){
 }
 
 void Server::exitClient(int clientSocketDescriptor){
-    sentMessageToClient(clientSocketDescriptor, "")
+    send(clientSocketDescriptor, "Your exit request has been received\n", strlen("Your exit request has been received\n"),0);
     close(clientSocketDescriptor);
 }

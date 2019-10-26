@@ -31,6 +31,7 @@ class Client {
         fd_set readerFileDescriptor_;
         fd_set auxiliarFileDescriptor_;
         char messageBuffer_[128];
+        bool endComunication_;
 
         inline int getClientSocketDescriptor_() {return clientSocketDescriptor_;}
         inline const struct sockaddr * getFormattedServerSocketData_() {return (struct sockaddr *) &serverSocketData_;}
@@ -43,10 +44,10 @@ class Client {
         void requestServerConnection_();
         void setFileDescriptorStructures_();
 
-        void readServerMessage_(bool &endComunication);
-        void handleServerErrorMessages_(bool &endComunication);
-        void sendMessageToServer_(bool &endComunication);
-        void handleClientMessage_(bool &endComunication);
+        void readServerMessage_();
+        void handleServerErrorMessages_();
+        void sendMessageToServer_();
+        void handleClientMessage_();
 
     public:
         Client(string serverIpAddress, int serverPortNumber);
