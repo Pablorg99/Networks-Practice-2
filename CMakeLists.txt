@@ -17,6 +17,8 @@ add_library(PlayerLib src/Player.cc)
 add_library(DominoGameTestLib tests/DominoGameTest.cc)
 add_library(TileTestLib tests/TileTest.cc)
 add_library(PlayerTestLib tests/PlayerTest.cc)
+add_library(ServerLib src/Server.cc)
+add_library(MainServerLib MainServer.cc)
 
 
 # Build TileTest executable
@@ -37,3 +39,7 @@ target_link_libraries(DominoGameTest DominoGameTestLib)
 target_link_libraries(DominoGameTest TileLib)
 target_link_libraries(DominoGameTest PlayerLib)
 add_test(DominoGameTest DominoGameTest)
+
+add_executable(ServerMain.out ServerMain.cc)
+target_link_libraries(ServerMain.out MainServerLib)
+target_link_libraries(ServerMain.out ServerLib)
