@@ -137,11 +137,11 @@ int main ( )
                                 
                                     send(connectedSocketDescriptor,buffer,strlen(buffer),0);
                                 
-                                    for(j=0; j<(numClientes-1);j++){
+                                    for(clientID=0; clientID<(numClientes-1);clientID++){
                                     
                                         clearBuffer(buffer,sizeof(buffer));
                                         sprintf(buffer, "Nuevo Cliente conectado: %d\n",connectedSocketDescriptor);
-                                        send(arrayClientes[j],buffer,strlen(buffer),0);
+                                        send(arrayClientes[clientID],buffer,strlen(buffer),0);
                                     }
                                 }
                                 else
