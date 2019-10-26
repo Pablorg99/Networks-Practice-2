@@ -168,20 +168,20 @@ void Server::exitClient(int socketID, fd_set * readerFileDescriptor_, int number
     close(socketID);
     FD_CLR(socketID,readerFileDescriptor_);
     
-    for (auto clientSocketDescriptor = Clients_.begin(); clientSocketDescriptor != Clients_.end(); ++clientSocketDescriptor) {
+    for (auto clientSocketDescriptor = Clients.begin(); clientSocketDescriptor != Clients.end(); ++clientSocketDescriptor) {
         if(*clientSocketDescriptor != socketID){
             break;     
         }
     }
-    for (auto clientSocketDescriptor = Clients_.begin(); clientSocketDescriptor != Clients_.end(); ++clientSocketDescriptor) {
+    for (auto clientSocketDescriptor = Clients.begin(); clientSocketDescriptor != Clients.end(); ++clientSocketDescriptor) {
         clientSocketDescriptor = clientSocketDescriptor++;
     }
-    this->numberOfClients_--;
+    numberOfClients--;
     
     memset(messageBuffer_, 0, sizeof(messageBuffer_));
     sprintf(messageBuffer_, "Desconexión del cliente: %d\n", socketID)  ;
     
-    for (auto clientSocketDescriptor = Clients_.begin(); clientSocketDescriptor != Clients_.end(); ++clientSocketDescriptor) {
+    for (auto clientSocketDescriptor = Clients.begin(); clientSocketDescriptor != Clients.end(); ++clientSocketDescriptor) {
         if(*clientSocketDescriptor != socketID){
             send(*clientSocketDescriptor, messageBuffer_, strlen(messageBuffer_), 0);     
         }
