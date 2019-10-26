@@ -129,6 +129,7 @@ int main ( )
                             else
                             {
                                 if(numClientes < MAX_CLIENTS){
+
                                     arrayClientes[numClientes] = connectionSocketDescriptor;
                                     numClientes++;
                                     FD_SET(connectionSocketDescriptor,&readfds);
@@ -136,11 +137,13 @@ int main ( )
                                     strcpy(buffer, "Bienvenido al chat\n");
                                 
                                     send(connectionSocketDescriptor,buffer,strlen(buffer),0);
+
                                 
                                     for(clientID=0; clientID<(numClientes-1);clientID++){
                                     
                                         clearBuffer(buffer,sizeof(buffer));
                                         sprintf(buffer, "Nuevo Cliente conectado: %d\n",connectionSocketDescriptor);
+
                                         send(arrayClientes[clientID],buffer,strlen(buffer),0);
                                     }
                                 }
@@ -148,8 +151,10 @@ int main ( )
                                 {
                                     clearBuffer(buffer,sizeof(buffer));
                                     strcpy(buffer,"Demasiados clientes conectados\n");
+
                                     sprintf(connectionSocketDescriptor,buffer,strlen(buffer),0);
                                     close(connectionSocketDescriptor);
+
                                 }
                                 
                             }
@@ -174,7 +179,7 @@ int main ( )
                                 
                                 
                             }
-                            //Mensajes que se quieran mandar a los clientes (implementar)
+                            //Mensaes que se quieran mandar a los clientes (implementar)
                             
                         } 
                         else{
