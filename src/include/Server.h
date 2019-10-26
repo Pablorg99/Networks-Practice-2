@@ -1,8 +1,10 @@
 #ifndef SERVER_H
 #define SERVER_H
 
-#include <sys/types.h>
+// select()
+#include <sys/select.h>
 // socket() and parameters
+#include <sys/types.h>
 #include <sys/socket.h>
 // sockaddr_in structure
 #include <netinet/in.h>
@@ -53,6 +55,9 @@ class Server {
         
         vector <int> Clients_;
         inline vector <int> getClients_() {return Clients_;}
+
+        vector <int> playersQueue_;
+        inline vector <int> getPlayersQueue_() {return playersQueue_;}
         
         fd_set readerFileDescriptor_;
         inline fd_set * getReaderFileDescriptor_() {return &readerFileDescriptor_;}
@@ -73,7 +78,6 @@ class Server {
 
     public:
         Server(int serverPort);
-        void clearFDSet();
         void serverMessageHandler();
         void clientMessageHandler(int socketID);
         void searchForMatch();

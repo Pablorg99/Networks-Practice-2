@@ -80,7 +80,7 @@ void Client::sendMessageToServer_(bool &endComunication) {
 }
 
 void Client::handleClientMessage_(bool &endComunication) {
-    if(strcmp(messageBuffer_, "EXIT\n")) {
+    if(not strcmp(messageBuffer_, "EXIT\n")) {
         endComunication = true;
     }
 }

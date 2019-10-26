@@ -18,10 +18,9 @@ add_library(DominoGameTestLib tests/DominoGameTest.cc)
 add_library(TileTestLib tests/TileTest.cc)
 add_library(PlayerTestLib tests/PlayerTest.cc)
 add_library(ServerLib src/Server.cc)
-add_library(MainServerLib MainServer.cc)
-
+add_library(ServerMainLib ServerMain.cc)
 add_library(ClientLib src/Client.cc)
-add_library(MainClientLib ClientMain.cc)
+add_library(ClientMainLib ClientMain.cc)
 
 # Build TileTest executable
 add_executable(TileTest tests/TileTest.cc)
@@ -43,11 +42,11 @@ target_link_libraries(DominoGameTest PlayerLib)
 add_test(DominoGameTest DominoGameTest)
 
 # Build MainServer executable
-add_executable(MainServer.out MainServer.cc)
-target_link_libraries(MainServer.out MainServerLib)
-target_link_libraries(MainServer.out ServerLib)
+add_executable(ServerMain.out ServerMain.cc)
+target_link_libraries(ServerMain.out ServerMainLib)
+target_link_libraries(ServerMain.out ServerLib)
 
 # Build ClientMain executable
 add_executable(ClientMain.out ClientMain.cc)
-target_link_libraries(ClientMain.out MainClientLib)
+target_link_libraries(ClientMain.out ClientMainLib)
 target_link_libraries(ClientMain.out ClientLib)
