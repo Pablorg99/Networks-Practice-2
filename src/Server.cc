@@ -105,13 +105,17 @@ void Server::searchForMatch() {
     }
 }
 
-void Server::startGame(){
+void Server::startGame(int clientSocketDescriptor){
     vector<int> gamePlayers;
     gamePlayers.push_back(clientSocketDescriptor);
 
     if (this->getPlayersQueue_().size() > 0){
         gamePlayers.push_back(this->getPlayersQueue_().at(0));
         playersQueue_.erase(this->getPlayersQueue_.begin() + 0);
+    }
+    else {
+        this->getPlayersQueue_().push_back(clientSocketDescriptor);
+        send(clientSocketDescriptor, "+Searching for any players to play...", 100, 0);
     }
 }
 

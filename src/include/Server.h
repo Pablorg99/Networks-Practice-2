@@ -81,6 +81,7 @@ class Server {
         void serverMessageHandler();
         void clientMessageHandler(int socketID);
         void searchForMatch();
+        void startGame(int clientSocketDescriptor);
         void exitClient(int socketID, fd_set * readerFileDescriptor_, int numberOfClients , vector <int> Clients);
         void closeServer_();
 };   
