@@ -52,7 +52,6 @@ void Server::setFileDescriptorStructures_() {
     FD_ZERO(&readerFileDescriptor_);
     FD_ZERO(&auxiliarFileDescriptor_);
     FD_SET(0, &readerFileDescriptor_);
-    FD_SET(serverSocketDescriptor_, &readerFileDescriptor_);
 }
 
 void Server::handleNewClient_() {
@@ -94,9 +93,9 @@ void Server::searchForMatch() {
 
         auxiliarFileDescriptor_ = readerFileDescriptor_;
 
-        int exit = select(FD_SETSIZE, &this->readerFileDescriptor_, NULL, NULL, NULL);
+        int exit = select(FD_SETSIZE, getReaderFileDescriptor_(), NULL, NULL, NULL);
 
-        if ( exit > 0 ){
+        if ( exit > 0 ) {
             for(socketID = 0; socketID < FD_SETSIZE; socketID++){
                 if(FD_ISSET(socketID, &auxiliarFileDescriptor_)){
                     if(socketID == serverSocketDescriptor_){
