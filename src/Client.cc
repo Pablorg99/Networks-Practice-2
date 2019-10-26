@@ -5,6 +5,7 @@ Client::Client(string serverIpAddress, int serverPortNumber) {
     fillServerSocketDataStructure_(serverIpAddress, serverPortNumber);
     requestServerConnection_();
     setFileDescriptorStructures_();
+    endComunication_ = false;
 }
 
 void Client::openClientSocket_() {
@@ -32,55 +33,53 @@ void Client::requestServerConnection_() {
 void Client::setFileDescriptorStructures_() {
     FD_ZERO(&readerFileDescriptor_);
     FD_ZERO(&auxiliarFileDescriptor_);
-    FD_SET(0, &readerFileDescriptor_);
     FD_SET(clientSocketDescriptor_, &readerFileDescriptor_);
 }
 
 void Client::startComunication() {
-    bool endComunication = false;
 
-    while (not endComunication) {
+    while (not endComunication_) {
         auxiliarFileDescriptor_ = readerFileDescriptor_;
         select(getClientSocketDescriptor_() + 1, &auxiliarFileDescriptor_, NULL, NULL, NULL);
         
         // There is data in the clientSocketFileDescriptor
         if(FD_ISSET(getClientSocketDescriptor_(), &auxiliarFileDescriptor_)) {
-            readServerMessage_(endComunication);
+            readServerMessage_();
         }
         
         // There is data in stdin
         else if (FD_ISSET(0, &auxiliarFileDescriptor_)) {
-            sendMessageToServer_(endComunication);
+            sendMessageToServer_();
         }
     }
 
     closeClient();
 }
 
-void Client::readServerMessage_(bool &endComunication) {
+void Client::readServerMessage_() {
     memset(messageBuffer_, 0, sizeof(messageBuffer_));
     recv(clientSocketDescriptor_, messageBuffer_, sizeof(messageBuffer_), 0);
             
     cout << messageBuffer_ << endl;
-    handleServerErrorMessages_(endComunication);
+    handleServerErrorMessages_();
 }
 
-void Client::handleServerErrorMessages_(bool &endComunication) {
+void Client::handleServerErrorMessages_() {
     if(strcmp(messageBuffer_, "Too many clients connected\n")) {
-        endComunication = true;
+        endComunication_ = true;
     }
 }
 
-void Client::sendMessageToServer_(bool &endComunication) {
+void Client::sendMessageToServer_() {
     memset(messageBuffer_, 0, sizeof(messageBuffer_));
     fgets(messageBuffer_, sizeof(messageBuffer_), stdin);
 
-    handleClientMessage_(endComunication);
+    handleClientMessage_();
     send(clientSocketDescriptor_, messageBuffer_, sizeof(messageBuffer_), 0);
 }
 
-void Client::handleClientMessage_(bool &endComunication) {
+void Client::handleClientMessage_() {
     if(not strcmp(messageBuffer_, "EXIT\n")) {
-        endComunication = true;
+        endComunication_ = true;
     }
 }
