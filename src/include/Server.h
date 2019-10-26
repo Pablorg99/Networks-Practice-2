@@ -10,6 +10,7 @@
 // STL Data Types
 #include <vector>
 #include <string>
+using std::vector;
 
 class Server {
 
@@ -17,17 +18,17 @@ class Server {
         int serverSocketDescriptor_;
         int serverCapacity_;
         struct sockaddr_in serverSocketData_;
-        std::vector<int> Clients_;
+        vector<int> Clients_;
         fd_set ReadSet_;
         inline const struct sockaddr * getFormattedServerSocketAddress_() {return (struct sockaddr *) &this->serverSocketData_;}
         inline int getServerSocketDescriptor_() {return serverSocketDescriptor_;}
         inline socklen_t getServerSocketDataSize_() {return sizeof(&this->serverSocketData_);}
+        inline vector<int> getClients_(){return Clients_;}
 
     public:
         Server(int serverPort, int serverCapacity);
-
-        
         void HandleMessage(int clientSocketDescriptor, const char* message);
+        void ClearFDSet();
 };   
 
 

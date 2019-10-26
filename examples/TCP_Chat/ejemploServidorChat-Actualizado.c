@@ -30,7 +30,7 @@ int main ( )
 	/*---------------------------------------------------- 
 		Descriptor del socket y buffer de datos                
 	-----------------------------------------------------*/
-	int sd, new_sd;
+	int serverSocketDescriptor, connectedSocketDescriptor;
 	struct sockaddr_in sockname, from;
 	char buffer[MSG_SIZE];
 	socklen_t from_len;
@@ -39,7 +39,7 @@ int main ( )
     int arrayClientes[MAX_CLIENTS];
     int numClientes = 0;
     //contadores
-    int i,j,k;
+    int socketID, clientID,k;
 	int recibidos;
     char identificador[MSG_SIZE];
     
@@ -50,10 +50,10 @@ int main ( )
 	/* --------------------------------------------------
 		Se abre el socket 
 	---------------------------------------------------*/
-  	sd = socket (AF_INET, SOCK_STREAM, 0);
-	if (sd == -1)
+  	serverSocketDescriptor = socket (AF_INET, SOCK_STREAM, 0);
+	if (serverSocketDescriptor == -1)
 	{
-		perror("No se puede abrir el socket cliente\n");
+		perror("No se puede abrir el socket del servidor\n");
     		exit (1);	
 	}
     
@@ -64,7 +64,7 @@ int main ( )
     // mismo puerto. De lo contrario habrÌa que esperar a que el puerto
     // quedase disponible (TIME_WAIT en el caso de TCP)
     on=1;
-    ret = setsockopt( sd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+    ret = setsockopt( serverSocketDescriptor, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
 
 
 
@@ -72,7 +72,7 @@ int main ( )
 	sockname.sin_port = htons(2000);
 	sockname.sin_addr.s_addr =  INADDR_ANY;
 
-	if (bind (sd, (struct sockaddr *) &sockname, sizeof (sockname)) == -1)
+	if (bind (serverSocketDescriptor, (struct sockaddr *) &sockname, sizeof (sockname)) == -1)
 	{
 		perror("Error en la operación bind");
 		exit(1);
@@ -87,7 +87,7 @@ int main ( )
 		from_len = sizeof (from);
 
 
-		if(listen(sd,1) == -1){
+		if(listen(serverSocketDescriptor,1) == -1){
 			perror("Error en la operación de listen");
 			exit(1);
 		}
@@ -95,7 +95,7 @@ int main ( )
     //Inicializar los conjuntos fd_set
     FD_ZERO(&readfds);
     FD_ZERO(&auxfds);
-    FD_SET(sd,&readfds);
+    FD_SET(serverSocketDescriptor,&readfds);
     FD_SET(0,&readfds);
     
    	
@@ -116,88 +116,88 @@ int main ( )
             if(salida > 0){
                 
                 
-                for(i=0; i<FD_SETSIZE; i++){
+                for(socketID=0; socketID<FD_SETSIZE; socketID++){
                     
                     //Buscamos el socket por el que se ha establecido la comunicación
-                    if(FD_ISSET(i, &auxfds)) {
+                    if(FD_ISSET(socketID, &auxfds)) {
                         
-                        if( i == sd){
+                        if( socketID == serverSocketDescriptor){
                             
-                            if((new_sd = accept(sd, (struct sockaddr *)&from, &from_len)) == -1){
+                            if((connectedSocketDescriptor = accept(serverSocketDescriptor, (struct sockaddr *)&from, &from_len)) == -1){
                                 perror("Error aceptando peticiones");
                             }
                             else
                             {
                                 if(numClientes < MAX_CLIENTS){
-                                    arrayClientes[numClientes] = new_sd;
+                                    arrayClientes[numClientes] = connectedSocketDescriptor;
                                     numClientes++;
-                                    FD_SET(new_sd,&readfds);
+                                    FD_SET(connectedSocketDescriptor,&readfds);
                                 
                                     strcpy(buffer, "Bienvenido al chat\n");
                                 
-                                    send(new_sd,buffer,strlen(buffer),0);
+                                    send(connectedSocketDescriptor,buffer,strlen(buffer),0);
                                 
                                     for(j=0; j<(numClientes-1);j++){
                                     
-                                        bzero(buffer,sizeof(buffer));
-                                        sprintf(buffer, "Nuevo Cliente conectado: %d\n",new_sd);
+                                        clearBuffer(buffer,sizeof(buffer));
+                                        sprintf(buffer, "Nuevo Cliente conectado: %d\n",connectedSocketDescriptor);
                                         send(arrayClientes[j],buffer,strlen(buffer),0);
                                     }
                                 }
                                 else
                                 {
-                                    bzero(buffer,sizeof(buffer));
+                                    clearBuffer(buffer,sizeof(buffer));
                                     strcpy(buffer,"Demasiados clientes conectados\n");
-                                    send(new_sd,buffer,strlen(buffer),0);
-                                    close(new_sd);
+                                    send(connectedSocketDescriptor,buffer,strlen(buffer),0);
+                                    close(connectedSocketDescriptor);
                                 }
                                 
                             }
                             
                             
                         }
-                        else if (i == 0){
+                        else if (socketID == 0){
                             //Se ha introducido información de teclado
-                            bzero(buffer, sizeof(buffer));
+                            clearBuffer(buffer, sizeof(buffer));
                             fgets(buffer, sizeof(buffer),stdin);
                             
                             //Controlar si se ha introducido "SALIR", cerrando todos los sockets y finalmente saliendo del servidor. (implementar)
                             if(strcmp(buffer,"SALIR\n") == 0){
                              
-                                for (j = 0; j < numClientes; j++){
-                                    send(arrayClientes[j], "Desconexion servidor\n", strlen("Desconexion servidor\n"),0);
-                                    close(arrayClientes[j]);
-                                    FD_CLR(arrayClientes[j],&readfds);
+                                for (clientID = 0; clientID < numClientes; clientID++){
+                                    send(arrayClientes[clientID], "Desconexion servidor\n", strlen("Desconexion servidor\n"),0);
+                                    close(arrayClientes[clientID]);
+                                    FD_CLR(arrayClientes[clientID],&readfds);
                                 }
-                                    close(sd);
+                                    close(serverSocketDescriptor);
                                     exit(-1);
                                 
                                 
                             }
-                            //Mensajes que se quieran mandar a los clientes (implementar)
+                            //Mensaes que se quieran mandar a los clientes (implementar)
                             
                         } 
                         else{
-                            bzero(buffer,sizeof(buffer));
+                            clearBuffer(buffer,sizeof(buffer));
                             
-                            recibidos = recv(i,buffer,sizeof(buffer),0);
+                            recibidos = recv(socketID,buffer,sizeof(buffer),0);
                             
                             if(recibidos > 0){
                                 
                                 if(strcmp(buffer,"SALIR\n") == 0){
                                     
-                                    salirCliente(i,&readfds,&numClientes,arrayClientes);
+                                    salirCliente(socketID,&readfds,&numClientes,arrayClientes);
                                     
                                 }
                                 else{
                                     
-                                    sprintf(identificador,"%d: %s",i,buffer);
-                                    bzero(buffer,sizeof(buffer));
+                                    sprintf(identificador,"%d: %s",socketID,buffer);
+                                    clearBuffer(buffer,sizeof(buffer));
                                     strcpy(buffer,identificador);
                                     
-                                    for(j=0; j<numClientes; j++)
-                                        if(arrayClientes[j] != i)
-                                            send(arrayClientes[j],buffer,strlen(buffer),0);
+                                    for(clientID=0; clientID<numClientes; clientID++)
+                                        if(arrayClientes[clientID] != socketID)
+                                            send(arrayClientes[clientID],buffer,strlen(buffer),0);
 
                                     
                                 }
@@ -207,9 +207,9 @@ int main ( )
                             //Si el cliente introdujo ctrl+c
                             if(recibidos== 0)
                             {
-                                printf("El socket %d, ha introducido ctrl+c\n", i);
+                                printf("El socket %d, ha introducido ctrl+c\n", socketID);
                                 //Eliminar ese socket
-                                salirCliente(i,&readfds,&numClientes,arrayClientes);
+                                salirCliente(socketID,&readfds,&numClientes,arrayClientes);
                             }
                         }
                     }
@@ -217,7 +217,7 @@ int main ( )
             }
 		}
 
-	close(sd);
+	close(serverSocketDescriptor);
 	return 0;
 	
 }
@@ -225,26 +225,26 @@ int main ( )
 void salirCliente(int socket, fd_set * readfds, int * numClientes, int arrayClientes[]){
   
     char buffer[250];
-    int j;
+    int client;
     
     close(socket);
     FD_CLR(socket,readfds);
     
     //Re-estructurar el array de clientes
-    for (j = 0; j < (*numClientes) - 1; j++)
-        if (arrayClientes[j] == socket)
+    for (client = 0; client < (*numClientes) - 1; client++)
+        if (arrayClientes[client] == socket)
             break;
-    for (; j < (*numClientes) - 1; j++)
-        (arrayClientes[j] = arrayClientes[j+1]);
+    for (; client < (*numClientes) - 1; client++)
+        (arrayClientes[client] = arrayClientes[client+1]);
     
     (*numClientes)--;
     
-    bzero(buffer,sizeof(buffer));
-    sprintf(buffer,"Desconexión del cliente: %d\n",socket);
+    clearBuffer(buffer,sizeof(buffer));
+    sprintf(buffer,"Desconexión del cliente: %d\n",socket)  ;
     
-    for(j=0; j<(*numClientes); j++)
-        if(arrayClientes[j] != socket)
-            send(arrayClientes[j],buffer,strlen(buffer),0);
+    for(client=0; client<(*numClientes); client++)
+        if(arrayClientes[client] != socket)
+            send(arrayClientes[client],buffer,strlen(buffer),0);
 
 
 }

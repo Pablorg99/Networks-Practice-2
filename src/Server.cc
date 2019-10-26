@@ -13,7 +13,7 @@ Server::Server(int serverPort, int serverCapacity){
     this->serverSocketDescriptor_ = socket (AF_INET, SOCK_STREAM, 0);
     if (this->serverSocketDescriptor_ == -1)
 	{
-		perror("Error opening client socket\n");
+		perror("Error opening server socket\n");
     		exit (1);	
 	}
     this->serverSocketData_.sin_family = AF_INET;
@@ -29,5 +29,14 @@ Server::Server(int serverPort, int serverCapacity){
     if(listen(this->serverSocketDescriptor_, this->serverCapacity_) == -1){
         perror("Error with listen operation");
         exit(1);
+    }
+}
+
+void Server::ClearFDSet(){
+    FD_ZERO(&this->ReadSet_);
+    FD_SET(this->serverSocketDescriptor_, &this->ReadSet_);
+
+    for (auto clientSocketDescriptor = this->getClients_().begin(); clientSocketDescriptor != this->getClients_().end(); ++clientSocketDescriptor) {
+        FD_SET(*clientSocketDescriptor, &this->ReadSet_);
     }
 }
