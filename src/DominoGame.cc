@@ -136,10 +136,12 @@ Player DominoGame::firstPlayerToPlay(){
     vector<Tile> firstPlayerTiles = firstPlayer_->getPlayerTiles();
     vector<Tile> secondPlayerTiles = secondPlayer_->getPlayerTiles();
     for (int tileIndex = 6; tileIndex > 0; --tileIndex) {
-        if(findTileInTiles(firstPlayerTiles, Tile(tileIndex,tileIndex))){
+        if(findTileInTiles(firstPlayerTiles, Tile(tileIndex,tileIndex))) {
+            firstPlayer_->setTurnToTrue();
             return *firstPlayer_;
         }
-        else if(findTileInTiles(secondPlayerTiles, Tile(tileIndex,tileIndex))){
+        else if(findTileInTiles(secondPlayerTiles, Tile(tileIndex,tileIndex))) {
+            secondPlayer_->setTurnToTrue();
             return *secondPlayer_;
         }
     }

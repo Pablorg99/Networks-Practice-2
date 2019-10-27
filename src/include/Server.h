@@ -83,6 +83,7 @@ class Server {
             void searchMatchForClient_(int clientSocketDescriptor);
                 void sendMessageBufferToAllPlayers_(vector <int> gamePlayers);
                 void createDominoGame_(vector <int> gamePlayers);
+                    void eraseClientsReadyForGame_(vector <int> gamePlayers);
         void serverMessageHandler_();
             void closeServer_();
 

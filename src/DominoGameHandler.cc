@@ -93,7 +93,7 @@ void DominoGameHandler::commandHandler() {
         manageDrawTile_();
     }
     else if(strcmp(messageBuffer_, "SURRENDER\n") == 0) {
-        endGame_();
+        close(playerTurnSocketDescriptor_);
     }
     else {
         send(playerTurnSocketDescriptor_, "ERROR: This is not a valid option", BUFFER_SIZE, 0);
@@ -113,7 +113,7 @@ void DominoGameHandler::manageDrawTile_() {
     else {
         if(Game_.canPutAtLeastOneTile(Game_.getSecondPlayer())){
             sprintf(messageBuffer_, "You can play at least one tile\n");
-            send(Game_.getFirstPlayer()->getPlayerSocketDescriptor(), messageBuffer_, BUFFER_SIZE, 0);
+            send(Game_.getSecondPlayer()->getPlayerSocketDescriptor(), messageBuffer_, BUFFER_SIZE, 0);
         }
         else {
             Game_.getSecondPlayer()->addTile(Game_.drawRandomTile());
@@ -138,14 +138,4 @@ void DominoGameHandler::passTurn_() {
         sprintf(messageBuffer_, "It's your turn\n");
         send(Game_.getSecondPlayer()->getPlayerSocketDescriptor(), messageBuffer_, BUFFER_SIZE, 0);
     }
-}
-
-void DominoGameHandler::endGame_() {
-    sendMessageToPlayersInGame_("Game has ended");
-    vector <int> playersToQueue = { Game_.getFirstPlayer()->getPlayerSocketDescriptor(), Game_.getSecondPlayer()->getPlayerSocketDescriptor()};
-
-    Server Server(1);
-    Server.addClientsToServer(playersToQueue);
-    matchFinished_ = true;
-    playDomino();
 }

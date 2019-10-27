@@ -60,6 +60,7 @@ void Server::startServer() {
             if (FD_ISSET(*clientSocketDescriptor, &readerFileDescriptor_)) {
                 if ((recv(*clientSocketDescriptor, &messageBuffer_, BUFFER_SIZE, 0) > 0)) {
                     clientMessageHandler_(*clientSocketDescriptor);
+                    break;
                 } 
             }
         }
@@ -165,8 +166,19 @@ void Server::createDominoGame_(vector <int> gamePlayers){
     Player *firstPlayer = new Player("firstPlayerUsername", "firstPlayerPass", gamePlayers[0]);
     Player *secondPlayer = new Player("secondPlayerUsername", "secondPlayerPass", gamePlayers[1]);
     DominoGame *newGame = new DominoGame(firstPlayer, secondPlayer);
+    eraseClientsReadyForGame_(gamePlayers);
     Games_.push_back(* new DominoGameHandler(newGame, serverSocketDescriptor_));
     Threads_.push_back(std::async(std::launch::async, [this]{return Games_.back().playDomino();}));
+}
+
+void Server::eraseClientsReadyForGame_(vector <int> gamePlayers) {
+    for (unsigned int i = 0; i < gamePlayers.size(); i++){
+        for (unsigned int j = 0; j < clientsConnected_.size(); j++){
+            if (gamePlayers[i] == clientsConnected_[j]){
+                clientsConnected_.erase(clientsConnected_.begin() + j);
+            }
+        }
+    }
 }
 
 void Server::serverMessageHandler_() {
