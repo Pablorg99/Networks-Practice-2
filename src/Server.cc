@@ -44,7 +44,7 @@ void Server::markServerSocketAsPassiveSocket_() {
 void Server::recreateFileDescriptor_() {
     FD_ZERO(&readerFileDescriptor_);
     FD_SET(serverSocketDescriptor_, &readerFileDescriptor_);
-
+    FD_SET(0, &readerFileDescriptor_);
     for (auto clientSocketDescriptor = clientsConnected_.begin(); clientSocketDescriptor != clientsConnected_.end(); ++clientSocketDescriptor) {
         FD_SET(*clientSocketDescriptor, &readerFileDescriptor_);
     }
@@ -54,7 +54,7 @@ void Server::startServer() {
 
     while(true) {
         recreateFileDescriptor_();
-        select(FD_SETSIZE, &auxiliarFileDescriptor_, NULL, NULL, NULL);
+        select(FD_SETSIZE, &readerFileDescriptor_, NULL, NULL, NULL);
         
         for (auto clientSocketDescriptor = clientsConnected_.begin(); clientSocketDescriptor != clientsConnected_.end(); ++clientSocketDescriptor) {
             if (FD_ISSET(*clientSocketDescriptor, &readerFileDescriptor_)) {
@@ -150,8 +150,6 @@ void Server::sendMessageBufferToAllPlayers_(vector <int> gamePlayers) {
 }
 
 void Server::serverMessageHandler_() {
-    memset(messageBuffer_, 0, sizeof(messageBuffer_));
-    fgets(messageBuffer_, sizeof(messageBuffer_),stdin);
     if (strcmp(messageBuffer_,"EXIT\n") == 0){
         closeServer_();
     }
