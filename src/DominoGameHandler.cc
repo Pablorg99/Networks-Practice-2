@@ -9,7 +9,7 @@ DominoGameHandler::DominoGameHandler(DominoGame* newGame, int serverSocketDescri
 void DominoGameHandler::sendMessageToPlayersInGame_(string message) {
     int firstPlayer = Game_.getFirstPlayer()->getPlayerSocketDescriptor();
     int secondPlayer = Game_.getSecondPlayer()->getPlayerSocketDescriptor();
-    sprintf(messageBuffer_, message.c_str());
+    sprintf(messageBuffer_, "%s", message.c_str());
     send(firstPlayer, messageBuffer_, BUFFER_SIZE, 0);
     send(secondPlayer, messageBuffer_, BUFFER_SIZE, 0);
 }
@@ -28,7 +28,7 @@ void DominoGameHandler::sendHandToPlayers_() {
 }
 
 void DominoGameHandler::sendMessageToPlayer_(Player *player, string message) {
-    sprintf(messageBuffer_, message.c_str());
+    sprintf(messageBuffer_, "%s", message.c_str());
     send(player->getPlayerSocketDescriptor(), messageBuffer_, BUFFER_SIZE, 0);
 }
 

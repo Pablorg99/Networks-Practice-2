@@ -14,8 +14,9 @@ Create your own build folder and install [cmake](https://cmake.org/install/)
 ```
 mkdir build && cd build
 cmake ..
-make
 ```
+
+The zip extracted have already the build directory created, you should run: `make`
 
 To run the test:
 
