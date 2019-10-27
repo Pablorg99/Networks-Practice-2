@@ -26,6 +26,9 @@ class DominoGame {
 
     public:
         DominoGame(Player *firstPlayer, Player *secondPlayer);
+        inline Player * getFirstPlayer() {return secondPlayer_;}
+        inline Player * getSecondPlayer() {return firstPlayer_;}
+        void passTurn();
         inline vector <Tile> getDrawPile() const {return drawPile_;}
         inline int getTilesLeftInPile() const {return tilesLeftInPile_;}
         inline list <Tile> getBoard() const {return board_;}
@@ -33,7 +36,7 @@ class DominoGame {
         void dealTiles();
         bool canPutAtLeastOneTile(Player *player);
         Tile drawRandomTile();
-        void putTile(Player *player, Tile tile, string boardSide);
+        bool putTile(Player *player, Tile tile, string boardSide);
         bool canPutTile(const Tile tile);
         inline void addTileAtBack(Tile newTile) {board_.push_back(newTile);}
         inline void addTileAtFront(Tile newTile) {board_.push_front(newTile);}

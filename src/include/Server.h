@@ -17,6 +17,8 @@
 #include <unistd.h>
 // bzero()
 #include <cstring>
+// Threads
+#include <future>
 
 // String
 #include <string>
@@ -33,6 +35,11 @@ using std::endl;
 
 using std::cerr;
 
+// Domino Classes
+#include "DominoGameHandler.h"
+#include "DominoGame.h"
+#include "Player.h"
+
 class Server {
 
     private:
@@ -48,6 +55,9 @@ class Server {
         
         char messageBuffer_[BUFFER_SIZE];
         
+        vector <DominoGameHandler> Games_;
+        vector <std::future <int> > Threads_;
+
         vector <int> clientsConnected_;
 
         vector <int> playersQueue_;
@@ -72,12 +82,14 @@ class Server {
         void clientMessageHandler_(int socketID);
             void searchMatchForClient_(int clientSocketDescriptor);
                 void sendMessageBufferToAllPlayers_(vector <int> gamePlayers);
+                void createDominoGame_(vector <int> gamePlayers);
         void serverMessageHandler_();
             void closeServer_();
 
     public:
         Server(int serverPort);
         void startServer();
+        void addClientsToServer(vector <int> clientsToAdd);
 };   
 
 
