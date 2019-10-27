@@ -128,7 +128,8 @@ void Server::clientMessageHandler_(int clientSocketDescriptor) {
         searchMatchForClient_(clientSocketDescriptor);
     }
     else {
-        Games_[0].commandHandler();
+        sprintf(messageBuffer_, "Unknown message\n");
+        send(clientSocketDescriptor, messageBuffer_, BUFFER_SIZE, 0);
     }
 }
 
