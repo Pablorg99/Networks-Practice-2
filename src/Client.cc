@@ -65,7 +65,7 @@ void Client::readServerMessage_() {
 }
 
 void Client::handleServerErrorMessages_() {
-    if(strcmp(messageBuffer_, "Too many clients connected\n")) {
+    if(strcmp(messageBuffer_, "Too many clients connected\n") == 0) {
         endComunication_ = true;
     }
 }

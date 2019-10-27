@@ -15,7 +15,6 @@ Server::Server(int serverPort) {
     fillServerSocketDataStructure_(serverPort);
     assingServerAddressToServerSocket_();
     markServerSocketAsPassiveSocket_();
-    setFileDescriptorStructures_();
     numberOfClients_ = 0;
 }
 
@@ -34,7 +33,8 @@ void Server::fillServerSocketDataStructure_(int serverPortNumber) {
 }
 
 void Server::assingServerAddressToServerSocket_() {
-    int bindResult = bind(getServerSocketDescriptor_(), getFormattedServerSocketData_(), getSizeOfServerSocketData_());
+    socklen_t serverSocketDataSize = sizeof(serverSocketData_);
+    int bindResult = bind(serverSocketDescriptor_, (struct sockaddr *) &serverSocketData_, serverSocketDataSize);
     if (bindResult == -1) {
 		cerr << "Error with bind operation" << endl;
 		exit(1);
@@ -49,31 +49,34 @@ void Server::markServerSocketAsPassiveSocket_() {
     }
 }
 
-void Server::setFileDescriptorStructures_() {
+void Server::recreateFileDescriptor_() {
     FD_ZERO(&readerFileDescriptor_);
-    FD_ZERO(&auxiliarFileDescriptor_);
-    FD_SET(0, &readerFileDescriptor_);
+    FD_SET(serverSocketDescriptor_, &readerFileDescriptor_);
+
+    for (auto clientSocketDescriptor = clientsConnected_.begin(); clientSocketDescriptor != clientsConnected_.end(); ++clientSocketDescriptor) {
+        FD_SET(*clientSocketDescriptor, &readerFileDescriptor_);
+    }
 }
 
 void Server::startServer() {
 
     while(true) {
-        auxiliarFileDescriptor_ = readerFileDescriptor_;
-        select(FD_SETSIZE, getAuxiliarFileDescriptor_(), NULL, NULL, NULL);
+        recreateFileDescriptor_();
+        select(FD_SETSIZE, &auxiliarFileDescriptor_, NULL, NULL, NULL);
 
-        if (FD_ISSET(getServerSocketDescriptor_(), getReaderFileDescriptor_())) {
+        if (FD_ISSET(serverSocketDescriptor_, &readerFileDescriptor_)) {
             handleNewClient_();
         }    
 
-        for (auto clientSocketDescriptor = getClients_().begin(); clientSocketDescriptor != getClients_().end(); ++clientSocketDescriptor) {
-            if (FD_ISSET(*clientSocketDescriptor, getReaderFileDescriptor_())) {
+        for (auto clientSocketDescriptor = clientsConnected_.begin(); clientSocketDescriptor != clientsConnected_.end(); ++clientSocketDescriptor) {
+            if (FD_ISSET(*clientSocketDescriptor, &readerFileDescriptor_)) {
                 if ((recv(*clientSocketDescriptor, &messageBuffer_, BUFFER_SIZE, 0) > 0)) {
                     clientMessageHandler_(*clientSocketDescriptor);
                 } 
             }
         }
 
-        if(FD_ISSET(0, getReaderFileDescriptor_())) {
+        if(FD_ISSET(0, &readerFileDescriptor_)) {
             fgets(messageBuffer_, BUFFER_SIZE, stdin);
             serverMessageHandler_();
         }
@@ -81,15 +84,14 @@ void Server::startServer() {
 }
 
 void Server::handleNewClient_() {
+    newClientSocketDescriptor_ = accept(serverSocketDescriptor_, (struct sockaddr *) &clientSocketData_ , &clientSocketDataSize_);
 
-    newClientSocketDescriptor_ = accept(getServerSocketDescriptor_(), getFormattedClientSocketData_(), getSizeOfClientSocketData_());
-
-    if(getNewClientSocketDescriptor_() == -1) {
+    if(newClientSocketDescriptor_ == -1) {
         cerr << "Error accepting requests" << endl;
         exit(1);
     }
 
-    else if(getNumberOfClients_() < MAX_CLIENTS) {
+    else if(numberOfClients_ < MAX_CLIENTS) {
         addClientToServer_();
     }
     
@@ -99,16 +101,16 @@ void Server::handleNewClient_() {
 }
 
 void Server::addClientToServer_() {
-    getClients_().push_back(getNewClientSocketDescriptor_());
+    clientsConnected_.push_back(newClientSocketDescriptor_);
     numberOfClients_++;
     sprintf(messageBuffer_, "Welcome To Server. Use <SEARCH-MATCH>\n");
-    send(getNewClientSocketDescriptor_(), messageBuffer_, BUFFER_SIZE, 0);
+    send(newClientSocketDescriptor_, messageBuffer_, BUFFER_SIZE, 0);
 }
 
 void Server::sendTooManyClientsMessageToNewClient_() {
     sprintf(messageBuffer_, "Too many clients connected\n");
-    send(getNewClientSocketDescriptor_(), messageBuffer_, BUFFER_SIZE, 0);
-    exitClient_(getNewClientSocketDescriptor_());
+    send(newClientSocketDescriptor_, messageBuffer_, BUFFER_SIZE, 0);
+    exitClient_(newClientSocketDescriptor_);
 }
 
 void Server::exitClient_(int clientSocketDescriptor) {
@@ -135,12 +137,12 @@ void Server::searchMatchForClient_(int clientSocketDescriptor){
     vector <int> gamePlayers;
     gamePlayers.push_back(clientSocketDescriptor);
 
-    if (getPlayersQueue_().size() > 0) {
-        gamePlayers.push_back(getPlayersQueue_().at(0));
-        playersQueue_.erase(getPlayersQueue_().begin());
+    if (playersQueue_.size() > 0) {
+        gamePlayers.push_back(playersQueue_.at(0));
+        playersQueue_.erase(playersQueue_.begin());
     }
     else {
-        getPlayersQueue_().push_back(clientSocketDescriptor);
+        playersQueue_.push_back(clientSocketDescriptor);
         sprintf(messageBuffer_, "+Searching for another player to play...");
         send(clientSocketDescriptor, messageBuffer_, BUFFER_SIZE, 0);
     }
@@ -155,10 +157,10 @@ void Server::serverMessageHandler_(){
 }
 
 void Server::closeServer_(){
-    for (auto clientSocketDescriptor = Clients_.begin(); clientSocketDescriptor != Clients_.end(); ++clientSocketDescriptor){
+    for (auto clientSocketDescriptor = clientsConnected_.begin(); clientSocketDescriptor != clientsConnected_.end(); ++clientSocketDescriptor){
         send(*clientSocketDescriptor, "Server is closing\n", strlen("Server is closing\n"),0);
         close(*clientSocketDescriptor);
-        FD_CLR(*clientSocketDescriptor, getReaderFileDescriptor_());
+        FD_CLR(*clientSocketDescriptor, &readerFileDescriptor_);
     }
     close(serverSocketDescriptor_);
     exit(-1);

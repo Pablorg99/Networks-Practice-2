@@ -36,35 +36,24 @@ class Server {
 
     private:
         int serverSocketDescriptor_;
-        inline int getServerSocketDescriptor_() {return serverSocketDescriptor_;}
-        
         int newClientSocketDescriptor_;
-        inline int getNewClientSocketDescriptor_() {return newClientSocketDescriptor_;}
         
         struct sockaddr_in serverSocketData_;
-        inline struct sockaddr * getFormattedServerSocketData_() {return (struct sockaddr *) &this->serverSocketData_;}
-        inline socklen_t getSizeOfServerSocketData_() {return sizeof(serverSocketData_);}
         
         struct sockaddr_in clientSocketData_;
-        inline struct sockaddr * getFormattedClientSocketData_() {return (struct sockaddr *) &clientSocketData_;}
-        inline socklen_t * getSizeOfClientSocketData_(){return (socklen_t *) sizeof(this->clientSocketData_);}
+        socklen_t clientSocketDataSize_;
                 
         int numberOfClients_;
-        inline int getNumberOfClients_() {return numberOfClients_;}
         
         char messageBuffer_[BUFFER_SIZE];
         
-        vector <int> Clients_;
-        inline vector <int> getClients_() {return Clients_;}
+        vector <int> clientsConnected_;
 
         vector <int> playersQueue_;
-        inline vector <int> getPlayersQueue_() {return playersQueue_;}
         
         fd_set readerFileDescriptor_;
-        inline fd_set * getReaderFileDescriptor_() {return &readerFileDescriptor_;}
 
         fd_set auxiliarFileDescriptor_;
-        inline fd_set * getAuxiliarFileDescriptor_() {return &auxiliarFileDescriptor_;}
         
         // Constructor
         void openServerSocket_();
@@ -74,6 +63,7 @@ class Server {
         void setFileDescriptorStructures_();
         
         // startServer
+        void recreateFileDescriptor_();
         void handleNewClient_();
             void addClientToServer_();
                 void sendTooManyClientsMessageToNewClient_();
