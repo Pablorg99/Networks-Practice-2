@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <stdlib.h>
@@ -30,7 +31,7 @@ int main ( )
 	/*---------------------------------------------------- 
 		Descriptor del socket y buffer de datos                
 	-----------------------------------------------------*/
-	int serverSocketDescriptor, connectedSocketDescriptor;
+	int serverSocketDescriptor, connectionSocketDescriptor;
 	struct sockaddr_in sockname, from;
 	char buffer[MSG_SIZE];
 	socklen_t from_len;
@@ -123,24 +124,24 @@ int main ( )
                         
                         if( socketID == serverSocketDescriptor){
                             
-                            if((connectedSocketDescriptor = accept(serverSocketDescriptor, (struct sockaddr *)&from, &from_len)) == -1){
+                            if((connectionSocketDescriptor = accept(serverSocketDescriptor, (struct sockaddr *)&from, &from_len)) == -1){
                                 perror("Error aceptando peticiones");
                             }
                             else
                             {
                                 if(numClientes < MAX_CLIENTS){
-                                    arrayClientes[numClientes] = connectedSocketDescriptor;
+                                    arrayClientes[numClientes] = connectionSocketDescriptor;
                                     numClientes++;
-                                    FD_SET(connectedSocketDescriptor,&readfds);
+                                    FD_SET(connectionSocketDescriptor,&readfds);
                                 
                                     strcpy(buffer, "Bienvenido al chat\n");
                                 
-                                    send(connectedSocketDescriptor,buffer,strlen(buffer),0);
+                                    send(connectionSocketDescriptor,buffer,strlen(buffer),0);
                                 
                                     for(clientID=0; clientID<(numClientes-1);clientID++){
                                     
                                         clearBuffer(buffer,sizeof(buffer));
-                                        sprintf(buffer, "Nuevo Cliente conectado: %d\n",connectedSocketDescriptor);
+                                        sprintf(buffer, "Nuevo Cliente conectado: %d\n",connectionSocketDescriptor);
                                         send(arrayClientes[clientID],buffer,strlen(buffer),0);
                                     }
                                 }
@@ -148,8 +149,8 @@ int main ( )
                                 {
                                     clearBuffer(buffer,sizeof(buffer));
                                     strcpy(buffer,"Demasiados clientes conectados\n");
-                                    send(connectedSocketDescriptor,buffer,strlen(buffer),0);
-                                    close(connectedSocketDescriptor);
+                                    sprintf(connectionSocketDescriptor,buffer,strlen(buffer),0);
+                                    close(connectionSocketDescriptor);
                                 }
                                 
                             }
@@ -174,7 +175,7 @@ int main ( )
                                 
                                 
                             }
-                            //Mensaes que se quieran mandar a los clientes (implementar)
+                            //Mensajes que se quieran mandar a los clientes (implementar)
                             
                         } 
                         else{
