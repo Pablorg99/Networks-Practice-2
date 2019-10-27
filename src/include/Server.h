@@ -1,6 +1,8 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+#define BUFFER_SIZE 128
+
 // select()
 #include <sys/select.h>
 // socket() and parameters
@@ -50,8 +52,7 @@ class Server {
         int numberOfClients_;
         inline int getNumberOfClients_() {return numberOfClients_;}
         
-        char messageBuffer_[128];
-        char messageIdentifier_[256];
+        char messageBuffer_[BUFFER_SIZE];
         
         vector <int> Clients_;
         inline vector <int> getClients_() {return Clients_;}
@@ -65,25 +66,26 @@ class Server {
         fd_set auxiliarFileDescriptor_;
         inline fd_set * getAuxiliarFileDescriptor_() {return &auxiliarFileDescriptor_;}
         
-
+        // Constructor
         void openServerSocket_();
         void fillServerSocketDataStructure_(int serverPortNumber);
         void assingServerAddressToServerSocket_();
         void markServerSocketAsPassiveSocket_();
         void setFileDescriptorStructures_();
         
+        // startServer
         void handleNewClient_();
-        void addClientToServer_();
-        void sendTooManyClientsMessageToNewClient_();
+            void addClientToServer_();
+                void sendTooManyClientsMessageToNewClient_();
+                void exitClient_(int clientSocketDescriptor);
+        void clientMessageHandler_(int socketID);
+            void searchMatchForClient_(int clientSocketDescriptor);
+        void serverMessageHandler_();
+            void closeServer_();
 
     public:
         Server(int serverPort);
-        void serverMessageHandler();
-        void clientMessageHandler(int socketID);
-        void searchForMatch();
-        void startGame(int clientSocketDescriptor);
-        void exitClient(int socketID, fd_set * readerFileDescriptor_, int numberOfClients , vector <int> Clients);
-        void closeServer_();
+        void startServer();
 };   
 
 

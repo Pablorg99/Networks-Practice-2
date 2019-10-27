@@ -55,6 +55,31 @@ void Server::setFileDescriptorStructures_() {
     FD_SET(0, &readerFileDescriptor_);
 }
 
+void Server::startServer() {
+
+    while(true) {
+        auxiliarFileDescriptor_ = readerFileDescriptor_;
+        select(FD_SETSIZE, getAuxiliarFileDescriptor_(), NULL, NULL, NULL);
+
+        if (FD_ISSET(getServerSocketDescriptor_(), getReaderFileDescriptor_())) {
+            handleNewClient_();
+        }    
+
+        for (auto clientSocketDescriptor = getClients_().begin(); clientSocketDescriptor != getClients_().end(); ++clientSocketDescriptor) {
+            if (FD_ISSET(*clientSocketDescriptor, getReaderFileDescriptor_())) {
+                if ((recv(*clientSocketDescriptor, &messageBuffer_, BUFFER_SIZE, 0) > 0)) {
+                    clientMessageHandler_(*clientSocketDescriptor);
+                } 
+            }
+        }
+
+        if(FD_ISSET(0, getReaderFileDescriptor_())) {
+            fgets(messageBuffer_, BUFFER_SIZE, stdin);
+            serverMessageHandler_();
+        }
+    }
+}
+
 void Server::handleNewClient_() {
 
     newClientSocketDescriptor_ = accept(getServerSocketDescriptor_(), getFormattedClientSocketData_(), getSizeOfClientSocketData_());
@@ -76,58 +101,57 @@ void Server::handleNewClient_() {
 void Server::addClientToServer_() {
     getClients_().push_back(getNewClientSocketDescriptor_());
     numberOfClients_++;
-    FD_SET(getNewClientSocketDescriptor_(), getReaderFileDescriptor_());
-    send(getNewClientSocketDescriptor_(), "Welcome to Server\n", strlen("Welcome to Server\n"), 0);
+    sprintf(messageBuffer_, "Welcome To Server. Use <SEARCH-MATCH>\n");
+    send(getNewClientSocketDescriptor_(), messageBuffer_, BUFFER_SIZE, 0);
 }
 
 void Server::sendTooManyClientsMessageToNewClient_() {
-    FD_SET(getNewClientSocketDescriptor_(), getReaderFileDescriptor_());
-    send(getNewClientSocketDescriptor_(), "Too many clients connected\n", strlen("Too many clients connected\n"), 0);
+    sprintf(messageBuffer_, "Too many clients connected\n");
+    send(getNewClientSocketDescriptor_(), messageBuffer_, BUFFER_SIZE, 0);
+    exitClient_(getNewClientSocketDescriptor_());
 }
 
-void Server::searchForMatch() {
+void Server::exitClient_(int clientSocketDescriptor) {
+    sprintf(messageBuffer_, "You are going to exit the server\n");
+    send(clientSocketDescriptor, messageBuffer_, BUFFER_SIZE, 0);
+    close(clientSocketDescriptor);
+}
 
-    while(true) {
-        auxiliarFileDescriptor_ = readerFileDescriptor_;
-        select(FD_SETSIZE, getAuxiliarFileDescriptor_(), NULL, NULL, NULL);
-
-        if (FD_ISSET(getServerSocketDescriptor_(), getReaderFileDescriptor_())) {
-            handleNewClient_();
-        }    
-
-        for (auto clientSocketDescriptor = getClients_().begin(); clientSocketDescriptor != getClients_().end(); ++clientSocketDescriptor) {
-            if (FD_ISSET(*clientSocketDescriptor, getReaderFileDescriptor_())) {
-                if ((recv(*clientSocketDescriptor, &messageBuffer_, 128, 0) > 0)) {
-                    clientMessageHandler(*clientSocketDescriptor);
-                } 
-            }
-        }
+void Server::clientMessageHandler_(int clientSocketDescriptor){
+    cout << "Client: " << clientSocketDescriptor << "sent: " << messageBuffer_ << endl;
+    if(strcmp(messageBuffer_, "EXIT\n") == 0){                               
+        exitClient_(clientSocketDescriptor);
+    }
+    else if(strcmp(messageBuffer_, "SEARCH-MATCH\n") == 0){
+        searchMatchForClient_(clientSocketDescriptor);
+    }
+    else{
+        sprintf(messageBuffer_, "Unknown command, try <SEARCH-MATCH> to start a game\n");
+        send(clientSocketDescriptor, messageBuffer_, BUFFER_SIZE, 0);
     }
 }
 
-void Server::startGame(int clientSocketDescriptor){
+void Server::searchMatchForClient_(int clientSocketDescriptor){
     vector <int> gamePlayers;
     gamePlayers.push_back(clientSocketDescriptor);
 
-    if (this->getPlayersQueue_().size() > 0){
-        gamePlayers.push_back(this->getPlayersQueue_().at(0));
-        playersQueue_.erase(this->getPlayersQueue_.begin() + 0);
+    if (getPlayersQueue_().size() > 0) {
+        gamePlayers.push_back(getPlayersQueue_().at(0));
+        playersQueue_.erase(getPlayersQueue_().begin());
     }
     else {
-        this->getPlayersQueue_().push_back(clientSocketDescriptor);
-        send(clientSocketDescriptor, "+Searching for any players to play...", 100, 0);
+        getPlayersQueue_().push_back(clientSocketDescriptor);
+        sprintf(messageBuffer_, "+Searching for another player to play...");
+        send(clientSocketDescriptor, messageBuffer_, BUFFER_SIZE, 0);
     }
 }
 
-void Server::serverMessageHandler(){
+void Server::serverMessageHandler_(){
     memset(messageBuffer_, 0, sizeof(messageBuffer_));
     fgets(messageBuffer_, sizeof(messageBuffer_),stdin);
     if (strcmp(messageBuffer_,"EXIT\n") == 0){
-        this->closeServer_();
+        closeServer_();
     }
-    // Add server to clients messages
-
-    
 }
 
 void Server::closeServer_(){
@@ -138,32 +162,4 @@ void Server::closeServer_(){
     }
     close(serverSocketDescriptor_);
     exit(-1);
-}
-
-void Server::clientMessageHandler(int clientSocketDescriptor){
-    cout << "Client: " << clientSocketDescriptor << "sent: " << messageBuffer_ << endl;
-    if(strcmp(messageBuffer_, "EXIT\n") == 0){                               
-        exitClient(clientSocketDescriptor);
-    }
-    
-    else if(strcmp(messageBuffer_, "INICIAR PARTIDA\n") == 0){
-        this->startMatch(clientSocketDescriptor);
-    }
-
-    else{
-        sprintf(messageIdentifier_, "%d: %s", socketID, messageBuffer_);
-        memset(messageBuffer_, 0, sizeof(messageBuffer_));
-        strcpy(messageBuffer_,messageIdentifier_);
-        
-        for (auto clientSocketDescriptor = Clients_.begin(); clientSocketDescriptor != Clients_.end(); ++clientSocketDescriptor){
-            if(*clientSocketDescriptor != socketID){
-                send(*clientSocketDescriptor,messageBuffer_,strlen(messageBuffer_),0);        
-            }
-        }
-    }
-}
-
-void Server::exitClient(int clientSocketDescriptor){
-    send(clientSocketDescriptor, "Your exit request has been received\n", strlen("Your exit request has been received\n"),0);
-    close(clientSocketDescriptor);
 }

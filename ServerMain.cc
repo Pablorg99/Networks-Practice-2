@@ -2,6 +2,6 @@
 
 int main() {
     Server server(2000);
-    server.searchForMatch();
+    server.startServer();
     return 0;
 }
