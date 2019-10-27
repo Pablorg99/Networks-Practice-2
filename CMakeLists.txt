@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.0)
 project(Networks-Practice-2)
 enable_testing()
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pedantic -Wall -Wextra")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pthread -Wall")
 
 # Public libraries
 include_directories(public/)
@@ -21,6 +21,7 @@ add_library(ServerLib src/Server.cc)
 add_library(ServerMainLib ServerMain.cc)
 add_library(ClientLib src/Client.cc)
 add_library(ClientMainLib ClientMain.cc)
+add_library(DominoGameHandlerLib src/DominoGameHandler.cc)
 
 # Build TileTest executable
 add_executable(TileTest tests/TileTest.cc)
@@ -45,6 +46,10 @@ add_test(DominoGameTest DominoGameTest)
 add_executable(ServerMain.out ServerMain.cc)
 target_link_libraries(ServerMain.out ServerMainLib)
 target_link_libraries(ServerMain.out ServerLib)
+target_link_libraries(ServerLib DominoGameHandlerLib)
+target_link_libraries(DominoGameHandlerLib DominoGameLib)
+target_link_libraries(DominoGameHandlerLib TileLib)
+target_link_libraries(DominoGameHandlerLib PlayerLib)
 
 # Build ClientMain executable
 add_executable(ClientMain.out ClientMain.cc)

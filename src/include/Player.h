@@ -14,13 +14,19 @@ class Player {
     private:
         string username_;
         string password_;
-        vector <Tile> myTiles_;
+        int playerSocketDescriptor_;
+        bool isTurn_;
 
     public:
-        Player(string username, string password);
+        vector <Tile> myTiles_;
+        Player(string username, string password, int playerSocketDescriptor);
+        inline int getPlayerSocketDescriptor() {return playerSocketDescriptor_;}
         inline void addTile(Tile newTile) {myTiles_.push_back(newTile);}
+        inline void setTurnToTrue() {isTurn_ = true;}
+        inline void setTurnToFalse() {isTurn_ = false;}
+        inline bool getTurn() {return isTurn_;}
         void deleteTile(Tile tileToRemove);
-        inline vector <Tile> getPlayerTiles() {return myTiles_;}
+        inline vector <Tile> getPlayerTiles() const {return myTiles_;}
         string getPlayerTilesString();
         inline string getUsername() const {return username_;}
         inline string getPassword() const {return password_;}

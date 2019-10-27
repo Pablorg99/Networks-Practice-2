@@ -62,9 +62,9 @@ void DominoGame::dealTiles() {
 }
 
 bool DominoGame::canPutAtLeastOneTile(Player *player) {
-    vector<Tile>::iterator tile;
+    vector<Tile>::const_iterator tile;
     
-    for (tile = player->getPlayerTiles().begin(); tile != player->getPlayerTiles().end(); ++tile) {
+    for (tile = player->myTiles_.begin(); tile != player->myTiles_.end(); ++tile) {
         if(canPutTile(*tile)) {
             return true;
         }
@@ -85,32 +85,42 @@ Tile DominoGame::drawRandomTile() {
     else throw "There are no tiles in the draw pile";
 }
 
-void DominoGame::putTile(Player *player, Tile tile, string boardside) {
-    if(boardside == "right side") {
+bool DominoGame::putTile(Player *player, Tile tile, string boardside) {
+    if(boardside == "right") {
         if(canPutTile(tile)){
             addTileAtBack(tile);
         }
         else if(canPutTile(tile.flippedTile())) {
             addTileAtBack(tile.flippedTile());
         }
+        else {
+            return false;
+        }
     } 
-    else {
+    else if(boardside == "left") {
         if(canPutTile(tile)) {
             addTileAtFront(Tile(tile));
         }
         else if(canPutTile(tile.flippedTile())) {
             addTileAtFront(tile.flippedTile());
         }
+        else {
+            return false;
+        }
     }
     player->deleteTile(tile);
+    return true;
 }
 
 bool DominoGame::canPutTile(const Tile tile) {
+    if(getBoard().size() == 0){
+        return true;
+    }
     Tile leftside = board_.front();
     Tile rightside = board_.back();
     
     if((tile.compatibleTile(rightside.getRight())) or (tile.compatibleTile(leftside.getLeft()))) {
-            return true;
+        return true;
     }
     return false;
 }
@@ -135,11 +145,24 @@ Player DominoGame::firstPlayerToPlay(){
     }
     int firstPlayerGreatestTileValue = firstPlayer_->greatestTileValue();
     int secondPlayerGreatestTileValue = secondPlayer_->greatestTileValue();
-    if(firstPlayerGreatestTileValue > secondPlayerGreatestTileValue){
+    if(firstPlayerGreatestTileValue > secondPlayerGreatestTileValue) {
+        firstPlayer_->setTurnToTrue();
         return *firstPlayer_;
     }
-    else{
+    else {
+        secondPlayer_->setTurnToTrue();
         return *secondPlayer_;
+    }
+}
+
+void DominoGame::passTurn() {
+    if (firstPlayer_->getTurn()) {
+        firstPlayer_->setTurnToFalse();
+        secondPlayer_->setTurnToTrue();
+    }
+    else {
+        firstPlayer_->setTurnToTrue();
+        secondPlayer_->setTurnToFalse();
     }
 }
 

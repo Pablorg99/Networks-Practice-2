@@ -9,8 +9,8 @@
 using namespace std;
 
 TEST_CASE("DominoGame Constructor") {
-    Player Pablo("pablorg99", "pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
+    Player Pablo("pablorg99", "pablorg99pass", 1);
+    Player Francis("francisjmp", "francisjmppass", 2);
     DominoGame Game(&Pablo, &Francis);
     
     CHECK(Game.getDrawPile().size() == 28);
@@ -19,8 +19,8 @@ TEST_CASE("DominoGame Constructor") {
 }
 
 TEST_CASE("getTilesLeftInPile is equal to drawPile size") {
-    Player Pablo("pablorg99", "pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
+    Player Pablo("pablorg99", "pablorg99pass", 1);
+    Player Francis("francisjmp", "francisjmppass", 2);
     DominoGame Game(&Pablo, &Francis);
     
     CHECK(Game.getDrawPile().size() == 28);
@@ -28,8 +28,8 @@ TEST_CASE("getTilesLeftInPile is equal to drawPile size") {
 }
 
 TEST_CASE("getBoardString returns a formated string with all tiles in the table") {
-    Player Pablo("pablorg99", "pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
+    Player Pablo("pablorg99", "pablorg99pass", 1);
+    Player Francis("francisjmp", "francisjmppass", 2);
     DominoGame Game(&Pablo, &Francis);
     
     Game.addTileAtBack(Tile(3,5));
@@ -40,8 +40,8 @@ TEST_CASE("getBoardString returns a formated string with all tiles in the table"
 }
 
 TEST_CASE("dealTiles deal 7 tiles to each player from the draw pile") {
-    Player Pablo("pablorg99", "pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
+    Player Pablo("pablorg99", "pablorg99pass", 1);
+    Player Francis("francisjmp", "francisjmppass", 2);
     DominoGame Game(&Pablo, &Francis);
     
     Game.dealTiles();
@@ -51,8 +51,8 @@ TEST_CASE("dealTiles deal 7 tiles to each player from the draw pile") {
 }
 
 TEST_CASE("canPutAtLeastOneTile indicates if a player can put any of its tiles in the game"){
-    Player Pablo("pablorg99","pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
+    Player Pablo("pablorg99", "pablorg99pass", 1);
+    Player Francis("francisjmp", "francisjmppass", 2);
     DominoGame Game(&Pablo, &Francis);
     
     Game.addTileAtBack(Tile(3,4));
@@ -65,8 +65,8 @@ TEST_CASE("canPutAtLeastOneTile indicates if a player can put any of its tiles i
 }
 
 TEST_CASE("drawRandomTile removes the tile from the draw pile") {
-    Player Pablo("pablorg99", "pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
+    Player Pablo("pablorg99", "pablorg99pass", 1);
+    Player Francis("francisjmp", "francisjmppass", 2);
     DominoGame Game(&Pablo, &Francis);
     
     CHECK(Game.getTilesLeftInPile() == 28);
@@ -79,8 +79,8 @@ TEST_CASE("drawRandomTile removes the tile from the draw pile") {
 
 
 TEST_CASE("canPutTile indicates if a tile can be put in the board"){
-    Player Pablo("pablorg99","pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
+    Player Pablo("pablorg99", "pablorg99pass", 1);
+    Player Francis("francisjmp", "francisjmppass", 2);
     DominoGame Game(&Pablo, &Francis);
     
     Game.addTileAtBack(Tile(2,3));
@@ -95,21 +95,25 @@ TEST_CASE("canPutTile indicates if a tile can be put in the board"){
 }
 
 TEST_CASE("putTile updates the number of player tiles and tiles onboard"){
-    Player Pablo("pablorg99","pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
+    Player Pablo("pablorg99","pablorg99pass", 1);
+    Player Francis("francisjmp", "francisjmppass", 2);
     DominoGame Game(&Pablo, &Francis);
+    Pablo.addTile(Tile(6,6));
     Pablo.addTile(Tile(5,4));
+    CHECK(Pablo.getPlayerTiles().size() == 2);
+    CHECK(Game.putTile(&Pablo, Tile(6,6), "right"));
     CHECK(Pablo.getPlayerTiles().size() == 1);
-    Game.addTileAtBack(Tile(4,4));
     CHECK(Game.getBoard().size() == 1);
-    Game.putTile(&Pablo, Tile(5,4), "right side");
-    CHECK(Pablo.getPlayerTiles().size() == 0);
+    Game.addTileAtBack(Tile(4,4));
     CHECK(Game.getBoard().size() == 2);
+    CHECK(Game.putTile(&Pablo, Tile(5,4), "right"));
+    CHECK(Pablo.getPlayerTiles().size() == 0);
+    CHECK(Game.getBoard().size() == 3);
 }
 
 TEST_CASE("findTileInTiles shound return if a certain tile is in a vector of tiles"){
-    Player Pablo("pablorg99","pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
+    Player Pablo("pablorg99","pablorg99pass", 1);
+    Player Francis("francisjmp", "francisjmppass", 2);
     DominoGame Game(&Pablo, &Francis);
     vector<Tile> vectorTiles;
     vectorTiles.push_back(Tile(6,5));
@@ -117,8 +121,8 @@ TEST_CASE("findTileInTiles shound return if a certain tile is in a vector of til
 }
 
 TEST_CASE("firstPlayerToPlay should return the player with the greatest double"){
-    Player Pablo("pablorg99","pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
+    Player Pablo("pablorg99","pablorg99pass", 1);
+    Player Francis("francisjmp", "francisjmppass", 2);
     DominoGame Game(&Pablo, &Francis);
     Game.dealTiles();
     Pablo.addTile(Tile(6,6));
@@ -126,8 +130,8 @@ TEST_CASE("firstPlayerToPlay should return the player with the greatest double")
 }
 
 TEST_CASE("firstPlayerToPlay should return the player with the 6-5 if no player has a double"){
-    Player Pablo("pablorg99","pablorg99pass");
-    Player Francis("francisjmp", "francisjmppass");
+    Player Pablo("pablorg99","pablorg99pass", 1);
+    Player Francis("francisjmp", "francisjmppass", 2);
     DominoGame Game(&Pablo, &Francis);
     Pablo.addTile(Tile(6,5));
     CHECK(Game.findTileInTiles(Pablo.getPlayerTiles(), Tile(6,5)));

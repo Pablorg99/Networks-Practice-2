@@ -100,6 +100,13 @@ void Server::addClientToServer_() {
     send(newClientSocketDescriptor_, messageBuffer_, BUFFER_SIZE, 0);
 }
 
+void Server::addClientsToServer(vector <int> clientsToAdd) {
+    for (auto client = clientsToAdd.begin(); client != clientsToAdd.end(); client++){
+        clientsConnected_.push_back(*client);
+    }
+    this->recreateFileDescriptor_();
+}
+
 void Server::sendTooManyClientsMessageToNewClient_() {
     sprintf(messageBuffer_, "Too many clients connected\n");
     send(newClientSocketDescriptor_, messageBuffer_, BUFFER_SIZE, 0);
@@ -117,12 +124,11 @@ void Server::clientMessageHandler_(int clientSocketDescriptor) {
     if(strcmp(messageBuffer_, "EXIT\n") == 0){                               
         exitClient_(clientSocketDescriptor);
     }
-    else if(strcmp(messageBuffer_, "SEARCH-MATCH\n") == 0){
+    else if(strcmp(messageBuffer_, "SEARCH-MATCH\n") == 0) {
         searchMatchForClient_(clientSocketDescriptor);
     }
-    else{
-        sprintf(messageBuffer_, "Unknown command, try <SEARCH-MATCH> to start a game\n");
-        send(clientSocketDescriptor, messageBuffer_, BUFFER_SIZE, 0);
+    else {
+        Games_[0].commandHandler();
     }
 }
 
@@ -130,16 +136,21 @@ void Server::searchMatchForClient_(int clientSocketDescriptor) {
     vector <int> gamePlayers;
     gamePlayers.push_back(clientSocketDescriptor);
 
-    if (playersQueue_.size() > 0) {
+    if (playersQueue_.size() == 1) {
         gamePlayers.push_back(playersQueue_.at(0));
         playersQueue_.erase(playersQueue_.begin());
         sprintf(messageBuffer_, "+Starting game...");
         sendMessageBufferToAllPlayers_(gamePlayers);
+        createDominoGame_(gamePlayers);
     }
-    else {
+    else if (playersQueue_.size() == 0) {
         playersQueue_.push_back(clientSocketDescriptor);
         sprintf(messageBuffer_, "+Searching for another player to play...");
         send(clientSocketDescriptor, messageBuffer_, BUFFER_SIZE, 0);
+    }
+    else {
+        cerr << "Error managing new players" << endl;
+        exit(1);
     }
 }
 
@@ -147,6 +158,14 @@ void Server::sendMessageBufferToAllPlayers_(vector <int> gamePlayers) {
     for (auto playerReady = gamePlayers.begin(); playerReady != gamePlayers.end(); ++playerReady) {
         send(*playerReady, messageBuffer_, BUFFER_SIZE, 0);
     }
+}
+
+void Server::createDominoGame_(vector <int> gamePlayers){
+    Player *firstPlayer = new Player("firstPlayerUsername", "firstPlayerPass", gamePlayers[0]);
+    Player *secondPlayer = new Player("secondPlayerUsername", "secondPlayerPass", gamePlayers[1]);
+    DominoGame *newGame = new DominoGame(firstPlayer, secondPlayer);
+    Games_.push_back(* new DominoGameHandler(newGame, serverSocketDescriptor_));
+    Threads_.push_back(std::async(std::launch::async, [this]{return Games_.back().playDomino();}));
 }
 
 void Server::serverMessageHandler_() {

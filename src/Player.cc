@@ -1,9 +1,11 @@
 #include "Player.h"
 #include <algorithm>
 
-Player::Player(string username, string password) {
+Player::Player(string username, string password, int playerSocketDescriptor) {
     username_ = username;
     password_ = password;
+    playerSocketDescriptor_ = playerSocketDescriptor;
+    isTurn_ = false;
 }
 
 string Player::getPlayerTilesString(){
