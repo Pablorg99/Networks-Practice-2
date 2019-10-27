@@ -2,10 +2,11 @@
 #define SERVER_H
 
 #define BUFFER_SIZE 128
+#define MAX_CLIENTS 30
 
-// select()
+// select() and fd_set
 #include <sys/select.h>
-// socket() and parameters
+// socket() and macros
 #include <sys/types.h>
 #include <sys/socket.h>
 // sockaddr_in structure
@@ -70,6 +71,7 @@ class Server {
                 void exitClient_(int clientSocketDescriptor);
         void clientMessageHandler_(int socketID);
             void searchMatchForClient_(int clientSocketDescriptor);
+                void sendMessageBufferToAllPlayers_(vector <int> gamePlayers);
         void serverMessageHandler_();
             void closeServer_();
 

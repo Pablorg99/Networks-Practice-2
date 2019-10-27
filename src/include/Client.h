@@ -29,16 +29,9 @@ class Client {
         int clientSocketDescriptor_;
         struct sockaddr_in serverSocketData_;
         fd_set readerFileDescriptor_;
-        fd_set auxiliarFileDescriptor_;
         char messageBuffer_[128];
         bool endComunication_;
 
-        inline int getClientSocketDescriptor_() {return clientSocketDescriptor_;}
-        inline const struct sockaddr * getFormattedServerSocketData_() {return (struct sockaddr *) &serverSocketData_;}
-        inline socklen_t getSizeOfServerSocketData_() {return sizeof(serverSocketData_);}
-        inline fd_set * getReaderFileDescriptor_() {return &readerFileDescriptor_;}
-        inline fd_set * getAuxiliarFileDescriptor_() {return &auxiliarFileDescriptor_;}
-        
         void openClientSocket_();
         void fillServerSocketDataStructure_(string serverIpAddress, int serverPortNumber);
         void requestServerConnection_();
@@ -51,7 +44,7 @@ class Client {
 
     public:
         Client(string serverIpAddress, int serverPortNumber);
-        inline void closeClient() {close(getClientSocketDescriptor_());}
+        inline void closeClient() {close(clientSocketDescriptor_);}
         void startComunication();
 };   
 

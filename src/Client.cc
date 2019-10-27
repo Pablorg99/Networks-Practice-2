@@ -4,7 +4,6 @@ Client::Client(string serverIpAddress, int serverPortNumber) {
     openClientSocket_();
     fillServerSocketDataStructure_(serverIpAddress, serverPortNumber);
     requestServerConnection_();
-    setFileDescriptorStructures_();
     endComunication_ = false;
 }
 
@@ -23,7 +22,9 @@ void Client::fillServerSocketDataStructure_(string serverIpAddress, int serverPo
 }
 
 void Client::requestServerConnection_() {
-    int connectionResult = connect(getClientSocketDescriptor_(), getFormattedServerSocketData_(), getSizeOfServerSocketData_());
+    socklen_t serverSocketDataSize;
+    serverSocketDataSize = sizeof(serverSocketData_);
+    int connectionResult = connect(clientSocketDescriptor_, (struct sockaddr *) &serverSocketData_, serverSocketDataSize);
     if (connectionResult == -1) {
         cerr << "Connection failure" << endl;
         exit(1);
@@ -32,23 +33,24 @@ void Client::requestServerConnection_() {
 
 void Client::setFileDescriptorStructures_() {
     FD_ZERO(&readerFileDescriptor_);
-    FD_ZERO(&auxiliarFileDescriptor_);
+    
+    FD_SET(0, &readerFileDescriptor_);
     FD_SET(clientSocketDescriptor_, &readerFileDescriptor_);
 }
 
 void Client::startComunication() {
 
     while (not endComunication_) {
-        auxiliarFileDescriptor_ = readerFileDescriptor_;
-        select(getClientSocketDescriptor_() + 1, &auxiliarFileDescriptor_, NULL, NULL, NULL);
+        setFileDescriptorStructures_();
+        select(clientSocketDescriptor_ + 1, &readerFileDescriptor_, NULL, NULL, NULL);
         
         // There is data in the clientSocketFileDescriptor
-        if(FD_ISSET(getClientSocketDescriptor_(), &auxiliarFileDescriptor_)) {
+        if(FD_ISSET(clientSocketDescriptor_, &readerFileDescriptor_)) {
             readServerMessage_();
         }
         
         // There is data in stdin
-        else if (FD_ISSET(0, &auxiliarFileDescriptor_)) {
+        else if (FD_ISSET(0, &readerFileDescriptor_)) {
             sendMessageToServer_();
         }
     }

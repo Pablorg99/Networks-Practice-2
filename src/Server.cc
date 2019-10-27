@@ -1,18 +1,10 @@
 #include "Server.h"
 
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <netinet/in.h>
-#include <netdb.h>
-#include <stdio.h>
-#include <string.h>
-#include <iostream>
-
-#define MAX_CLIENTS 30
-
 Server::Server(int serverPort) {
     openServerSocket_();
     fillServerSocketDataStructure_(serverPort);
+    int socketOption = 1;
+    setsockopt(serverSocketDescriptor_, SOL_SOCKET, SO_REUSEADDR, &socketOption, sizeof(socketOption));
     assingServerAddressToServerSocket_();
     markServerSocketAsPassiveSocket_();
     numberOfClients_ = 0;
@@ -63,11 +55,7 @@ void Server::startServer() {
     while(true) {
         recreateFileDescriptor_();
         select(FD_SETSIZE, &auxiliarFileDescriptor_, NULL, NULL, NULL);
-
-        if (FD_ISSET(serverSocketDescriptor_, &readerFileDescriptor_)) {
-            handleNewClient_();
-        }    
-
+        
         for (auto clientSocketDescriptor = clientsConnected_.begin(); clientSocketDescriptor != clientsConnected_.end(); ++clientSocketDescriptor) {
             if (FD_ISSET(*clientSocketDescriptor, &readerFileDescriptor_)) {
                 if ((recv(*clientSocketDescriptor, &messageBuffer_, BUFFER_SIZE, 0) > 0)) {
@@ -76,10 +64,15 @@ void Server::startServer() {
             }
         }
 
+        if (FD_ISSET(serverSocketDescriptor_, &readerFileDescriptor_)) {
+            handleNewClient_();
+        } 
+
         if(FD_ISSET(0, &readerFileDescriptor_)) {
             fgets(messageBuffer_, BUFFER_SIZE, stdin);
             serverMessageHandler_();
         }
+
     }
 }
 
@@ -119,8 +112,8 @@ void Server::exitClient_(int clientSocketDescriptor) {
     close(clientSocketDescriptor);
 }
 
-void Server::clientMessageHandler_(int clientSocketDescriptor){
-    cout << "Client: " << clientSocketDescriptor << "sent: " << messageBuffer_ << endl;
+void Server::clientMessageHandler_(int clientSocketDescriptor) {
+    cout << "Client: " << clientSocketDescriptor << " sent: " << messageBuffer_ << endl;
     if(strcmp(messageBuffer_, "EXIT\n") == 0){                               
         exitClient_(clientSocketDescriptor);
     }
@@ -133,13 +126,15 @@ void Server::clientMessageHandler_(int clientSocketDescriptor){
     }
 }
 
-void Server::searchMatchForClient_(int clientSocketDescriptor){
+void Server::searchMatchForClient_(int clientSocketDescriptor) {
     vector <int> gamePlayers;
     gamePlayers.push_back(clientSocketDescriptor);
 
     if (playersQueue_.size() > 0) {
         gamePlayers.push_back(playersQueue_.at(0));
         playersQueue_.erase(playersQueue_.begin());
+        sprintf(messageBuffer_, "+Starting game...");
+        sendMessageBufferToAllPlayers_(gamePlayers);
     }
     else {
         playersQueue_.push_back(clientSocketDescriptor);
@@ -148,7 +143,13 @@ void Server::searchMatchForClient_(int clientSocketDescriptor){
     }
 }
 
-void Server::serverMessageHandler_(){
+void Server::sendMessageBufferToAllPlayers_(vector <int> gamePlayers) {
+    for (auto playerReady = gamePlayers.begin(); playerReady != gamePlayers.end(); ++playerReady) {
+        send(*playerReady, messageBuffer_, BUFFER_SIZE, 0);
+    }
+}
+
+void Server::serverMessageHandler_() {
     memset(messageBuffer_, 0, sizeof(messageBuffer_));
     fgets(messageBuffer_, sizeof(messageBuffer_),stdin);
     if (strcmp(messageBuffer_,"EXIT\n") == 0){
@@ -156,7 +157,7 @@ void Server::serverMessageHandler_(){
     }
 }
 
-void Server::closeServer_(){
+void Server::closeServer_() {
     for (auto clientSocketDescriptor = clientsConnected_.begin(); clientSocketDescriptor != clientsConnected_.end(); ++clientSocketDescriptor){
         send(*clientSocketDescriptor, "Server is closing\n", strlen("Server is closing\n"),0);
         close(*clientSocketDescriptor);
